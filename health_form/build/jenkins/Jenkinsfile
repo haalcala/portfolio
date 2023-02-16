@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+//    environment {
+//        BUILD_ENV = "dev"
+//    }
+    stages {
+        stage('Checkout mattermost-webapp') {
+            steps {
+                checkout scmGit(branches: [[name: '*/feature/health_form']], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'portfolio']], userRemoteConfigs: [[url: 'https://github.com/haalcala/portfolio.git']])
+                sh '''#!/bin/bash
+                date +"%Y%m%d-%H%M%S" > .build_time_tag
+                '''
+            }
+        }
+    }
+}
