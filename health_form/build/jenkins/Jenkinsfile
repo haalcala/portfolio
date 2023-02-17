@@ -43,13 +43,9 @@ pipeline {
         stage('Package package server') {
             steps {
                 sh '''#!/bin/bash -xe
-                pwd
-                
-                _PWD=$PWD
-
                 cd health_form/server/javascript/express
 
-                $_PWD/package_server.sh 
+                $WORKSPACE/build/jenkins/package_server.sh 
                 '''
             }
         }
