@@ -45,7 +45,7 @@ pipeline {
                 sh '''#!/bin/bash -xe
                 cd health_form/server/javascript/express
 
-                $WORKSPACE/build/jenkins/package_server.sh 
+                $WORKSPACE/health_form/build/jenkins/package_server.sh 
                 '''
             }
         }
