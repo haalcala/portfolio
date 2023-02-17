@@ -5,15 +5,15 @@ pipeline {
 //        BUILD_ENV = "dev"
 //    }
     stages {
-        stage('Checkout repo') {
-            steps {
-                checkout scmGit(branches: [[name: '*/feature/health_form']], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'portfolio']], userRemoteConfigs: [[url: 'https://github.com/haalcala/portfolio.git']])
-            }
-        }
+        // stage('Checkout repo') {
+        //     steps {
+        //         checkout scmGit(branches: [[name: '*/feature/health_form']], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'portfolio']], userRemoteConfigs: [[url: 'https://github.com/haalcala/portfolio.git']])
+        //     }
+        // }
         stage('Build webapp') {
             steps {
                 sh '''#!/bin/bash -xe
-                cd portfolio/health_form/webapp/reactjs/vite
+                cd health_form/webapp/reactjs/vite
 
                 npm install
 
@@ -24,7 +24,7 @@ pipeline {
         stage('Package test server') {
             steps {
                 sh '''#!/bin/bash -xe
-                cd portfolio/health_form/server/javascript/express
+                cd health_form/server/javascript/express
 
                 npm install
 
@@ -35,19 +35,9 @@ pipeline {
         stage('Package package server') {
             steps {
                 sh '''#!/bin/bash -xe
-                cd portfolio/health_form/server/javascript/express
+                cd health_form/server/javascript/express
 
-                host_dir="$(pwd | sed -e "s/\/home\/jenkins\/workspace\//\/Users\/harold\/jenkins-agent_workspace\//")"
-
-                if [ ! -d "tmp" ]; then
-                    mkdir tmp
-                fi
-
-                cp -R src tmp/
-                cp package.json tmp/
-                cp ../../../webapp/reactjs/vite/dist tmp/public
-
-                docker build -t haalcala/health_form_server:latest tmp
+                ../../../../package_server.sh 
                 '''
             }
         }
