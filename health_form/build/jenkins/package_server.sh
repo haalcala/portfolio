@@ -13,4 +13,5 @@ cp -R src tmp/
 cp package.json tmp/
 cp -R $WORKSPACE/health_form/webapp/reactjs/vite/dist tmp/public
 
-docker build -t haalcala/health_form_server:latest $host_dir/tmp
+ssh $HOSTING_SERVER "mkdir -p health_form"
+scp -R tmp $HOSTING_SERVER:health_form
