@@ -5,11 +5,49 @@ pipeline {
 //        BUILD_ENV = "dev"
 //    }
     stages {
-        stage('Checkout mattermost-webapp') {
+        stage('Checkout repo') {
             steps {
                 checkout scmGit(branches: [[name: '*/feature/health_form']], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'portfolio']], userRemoteConfigs: [[url: 'https://github.com/haalcala/portfolio.git']])
-                sh '''#!/bin/bash
-                date +"%Y%m%d-%H%M%S" > .build_time_tag
+            }
+        }
+        stage('Build webapp') {
+            steps {
+                sh '''#!/bin/bash -xe
+                cd portfolio/health_form/webapp/reactjs/vite
+
+                npm install
+
+                npm run build
+                '''
+            }
+        }
+        stage('Package test server') {
+            steps {
+                sh '''#!/bin/bash -xe
+                cd portfolio/health_form/server/javascript/express
+
+                npm install
+
+                npm test
+                '''
+            }
+        }
+        stage('Package package server') {
+            steps {
+                sh '''#!/bin/bash -xe
+                cd portfolio/health_form/server/javascript/express
+
+                host_dir="$(pwd | sed -e "s/\/home\/jenkins\/workspace\//\/Users\/harold\/jenkins-agent_workspace\//")"
+
+                if [ ! -d "tmp" ]; then
+                    mkdir tmp
+                fi
+
+                cp -R src tmp/
+                cp package.json tmp/
+                cp ../../../webapp/reactjs/vite/dist tmp/public
+
+                docker build -t haalcala/health_form_server:latest tmp
                 '''
             }
         }
