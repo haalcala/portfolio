@@ -10,6 +10,6 @@ fi
 
 cp -R src tmp/
 cp package.json tmp/
-cp ../../../webapp/reactjs/vite/dist tmp/public
+cp $WORSPACE/health_form/webapp/reactjs/vite/dist tmp/public
 
 docker build -t haalcala/health_form_server:latest $host_dir/tmp
