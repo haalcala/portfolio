@@ -11,6 +11,6 @@ fi
 
 cp -R src tmp/
 cp package.json tmp/
-cp $WORKSPACE/health_form/webapp/reactjs/vite/dist tmp/public
+cp -R $WORKSPACE/health_form/webapp/reactjs/vite/dist tmp/public
 
 docker build -t haalcala/health_form_server:latest $host_dir/tmp
