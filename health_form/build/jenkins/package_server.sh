@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-host_dir="$(pwd | sed -e "s/\/home\/jenkins\/workspace\//\/Users\/harold\/jenkins-master_home\//")"
+host_dir="$(pwd | sed -e "s/\/home\/jenkins\/workspace\//\/Users\/harold\/jenkins-agent_workspace\//")"
 
 echo host_dir $host_dir
 pwd
