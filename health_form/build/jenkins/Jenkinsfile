@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+//    environment {
+//        BUILD_ENV = "dev"
+//    }
+    stages {
+        // stage('Checkout repo') {
+        //     steps {
+        //         checkout scmGit(branches: [[name: '*/feature/health_form']], extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'portfolio']], userRemoteConfigs: [[url: 'https://github.com/haalcala/portfolio.git']])
+        //     }
+        // }
+        stage('Build webapp') {
+            steps {
+                sh '''#!/bin/bash -xe
+                export NVM_DIR=".nvm"
+
+                export PATH="$PATH:$HOME/.nvm/versions/node/v16.19.0/bin"
+                
+                cd health_form/webapp/reactjs/vite
+
+                npm install
+
+                npm run build
+                '''
+            }
+        }
+        stage('Package test server') {
+            steps {
+                sh '''#!/bin/bash -xe
+                export NVM_DIR=".nvm"
+
+                export PATH="$PATH:$HOME/.nvm/versions/node/v16.19.0/bin"
+                
+                cd health_form/server/javascript/express
+
+                npm install
+
+                npm test
+                '''
+            }
+        }
+        stage('Package package server') {
+            steps {
+                sh '''#!/bin/bash -xe
+                cd health_form/server/javascript/express
+
+                $WORKSPACE/health_form/build/jenkins/package_server.sh 
+                '''
+            }
+        }
+    }
+}

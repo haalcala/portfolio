@@ -11,6 +11,8 @@ app.use(compression())
 
 app.use(bodyParser.json())
 
+app.use(express.static('public'));
+
 app.post('/api/v1/user_temp', async (req, res, next) => {
     try {
         console.log("req:", req.body)
