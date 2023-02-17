@@ -29,7 +29,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash -xe
                 export NVM_DIR=".nvm"
-                
+
                 export PATH="$PATH:$HOME/.nvm/versions/node/v16.19.0/bin"
                 
                 cd health_form/server/javascript/express
@@ -45,7 +45,7 @@ pipeline {
                 sh '''#!/bin/bash -xe
                 cd health_form/server/javascript/express
 
-                ../../../../package_server.sh 
+                $WORKSPACE/package_server.sh 
                 '''
             }
         }
