@@ -14,4 +14,4 @@ cp package.json tmp/
 cp -R $WORKSPACE/health_form/webapp/reactjs/vite/dist tmp/public
 
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa-jenkins-agent ubuntu@$HOSTING_SERVER "mkdir -p health_form"
-scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa-jenkins-agent tmp ubuntu@$HOSTING_SERVER:health_form
+rsync -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa-jenkins-agent" -r tmp/ ubuntu@$HOSTING_SERVER:health_form/
