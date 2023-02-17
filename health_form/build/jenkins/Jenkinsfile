@@ -13,6 +13,10 @@ pipeline {
         stage('Build webapp') {
             steps {
                 sh '''#!/bin/bash -xe
+                export NVM_DIR=".nvm"
+
+                export PATH="$PATH:$HOME/.nvm/versions/node/v16.19.0/bin"
+                
                 cd health_form/webapp/reactjs/vite
 
                 npm install
@@ -24,6 +28,10 @@ pipeline {
         stage('Package test server') {
             steps {
                 sh '''#!/bin/bash -xe
+                export NVM_DIR=".nvm"
+                
+                export PATH="$PATH:$HOME/.nvm/versions/node/v16.19.0/bin"
+                
                 cd health_form/server/javascript/express
 
                 npm install
