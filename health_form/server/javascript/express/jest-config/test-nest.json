@@ -1,0 +1,33 @@
+{
+  "rootDir": "../",
+  "roots": [
+    "<rootDir>/test/"
+  ],
+  "moduleFileExtensions": [
+    "ts",
+    "js",
+    "json",
+    "node"
+  ],
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  },
+  "testMatch": [ "**/test/**/?(*.)+(spec|test).[jt]s?(x)"],
+  "globals": {
+    "ts-jest": {
+      "tsconfig": "ts-config/test.json"
+    }
+  },
+  "testEnvironment": "node",
+  "collectCoverage": false,
+  "silent": true,
+  "coverageDirectory": "reports/coverage/",
+  "coverageProvider": "v8",
+  "reporters": [
+    "default",
+    ["jest-junit", {
+      "outputDirectory": "reports/",
+      "outputName": "test.xml"
+    }]
+  ]
+}

@@ -1,7 +1,8 @@
+jest.mock('../src/repositories/UserTemp')
+
+
 describe("services", () => {
     const repository = require('../src/repositories/UserTemp');
-
-    jest.mock('../src/repositories/UserTemp')
 
     let service = require("../src/services/UserTemp")
 
