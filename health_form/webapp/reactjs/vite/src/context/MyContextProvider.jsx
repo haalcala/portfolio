@@ -42,7 +42,7 @@ export function MyContextProvider({ children }) {
 
     console.log("resp:", resp)
 
-    if (resp.status == 200) {
+    if (resp.status == 200 || resp.status == 201) {
       setState({...state, response_status: "success"})
     }
     else {

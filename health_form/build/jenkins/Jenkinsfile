@@ -55,7 +55,7 @@ pipeline {
                 '''
             }
         }
-        stage('Package server') {
+        stage('Package express server') {
             steps {
                 sh '''#!/bin/bash -xe
                 cd health_form/server/javascript/express
