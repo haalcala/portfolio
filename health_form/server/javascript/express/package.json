@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",
-    "test": "jest --verbose",
+    "test": "jest --silent false --verbose --runInBand -c jest-config/test-nest.json --forceExit --reporters default",
     "dev": "nodemon -e js -w src src/main.js"
   },
   "author": "",
@@ -14,7 +14,8 @@
     "body-parser": "^1.20.1",
     "compression": "^1.7.4",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "ts-jest": "^29.0.5"
   },
   "devDependencies": {
     "chai": "^4.3.7",
