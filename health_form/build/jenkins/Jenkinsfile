@@ -25,7 +25,7 @@ pipeline {
                 '''
             }
         }
-        stage('Package test server') {
+        stage('Test express server') {
             steps {
                 sh '''#!/bin/bash -xe
                 export NVM_DIR=".nvm"
@@ -40,7 +40,22 @@ pipeline {
                 '''
             }
         }
-        stage('Package package server') {
+        stage('Test nestjs server') {
+            steps {
+                sh '''#!/bin/bash -xe
+                export NVM_DIR=".nvm"
+
+                export PATH="$PATH:$HOME/.nvm/versions/node/v16.19.0/bin"
+                
+                cd health_form/server/javascript/nestjs
+
+                npm install
+
+                npm test
+                '''
+            }
+        }
+        stage('Package server') {
             steps {
                 sh '''#!/bin/bash -xe
                 cd health_form/server/javascript/express
