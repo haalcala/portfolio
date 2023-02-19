@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "../transpile/"
+  },
+  "extends": "./base.json",
+  "include": ["../src/"],
+  "exclude": [
+    "../src/**/*.test.js",
+    "../src/**/*.test.ts",
+    "../src/**/*.spec.js",
+    "../src/**/*.spec.ts",
+    "../src/__tests__/"
+  ]
+}

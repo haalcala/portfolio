@@ -5,8 +5,8 @@ import { ApiInternalServerErrorResponse, ApiCreatedResponse, ApiTags } from '@ne
 import CreatedUserTempDto from './dto/created-user_temp-response.dto';
 import ErrorResponse from './dto/error-response.dto';
 
-@ApiTags("user-temp")
-@Controller('user-temp')
+@ApiTags("user_temp")
+@Controller('/api/v1/user_temp')
 export class UserTempController {
   constructor(private readonly userTempService: UserTempService) {}
 
@@ -14,7 +14,12 @@ export class UserTempController {
   @ApiInternalServerErrorResponse({type: ErrorResponse, description:"Error"})
   @Post()
   create(@Body() createUserTempDto: CreateUserTempDto): {success: true} {
-    this.userTempService.create(createUserTempDto);
+    const { name, temperature, symptomatic, in_contact } = createUserTempDto
+
+    this.userTempService.LogUserTemp(name, temperature, symptomatic, in_contact);
+
+    console.log("LogUserTemp returned successfully");
+
     return  {success: true}
   }
 }
