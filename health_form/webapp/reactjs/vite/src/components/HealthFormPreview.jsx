@@ -62,7 +62,7 @@ function HealthFormPreview() {
             <div className="remarks" style={{marginTop: "10px"}}>
                 <div style={{fontWeight: "bold"}}>REMARKS</div>
                 <div style={{marginTop: "10px", fontWeight: "bold"}} className={"submit " + (state.response_status + "_box")}>
-                    PASSED
+                    {state.response_status == "success" && "PASSED" || "FAILED"}
                 </div>
             </div>
         </div>
