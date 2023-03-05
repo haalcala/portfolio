@@ -72,6 +72,7 @@ export class JsonOutlineProvider implements vscode.TreeDataProvider<number> {
 	}
 
 	private onDocumentChanged(changeEvent: vscode.TextDocumentChangeEvent): void {
+		console.log("jsonOutline.ts:: onDocumentChanged:")
 		if (this.tree && this.autoRefresh && changeEvent.document.uri.toString() === this.editor?.document.uri.toString()) {
 			for (const change of changeEvent.contentChanges) {
 				const path = json.getLocation(this.text, this.editor.document.offsetAt(change.range.start)).path;

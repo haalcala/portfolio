@@ -250,7 +250,7 @@
         "properties": {
           "jsonOutline.autorefresh": {
             "type": "boolean",
-            "default": false
+            "default": true
           }
         }
       }

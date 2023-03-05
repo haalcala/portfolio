@@ -1,0 +1,11 @@
+{
+    "prop1": "value1",
+    "payload": {
+        "aaaa": "value2",
+        "payload 111": {
+            "prop3": "value3"
+        },
+        "prop3": "value3"
+    },
+    "prop2": "prop2 value2"
+}
