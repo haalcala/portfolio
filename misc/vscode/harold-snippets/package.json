@@ -18,12 +18,82 @@
   "main": "./dist/extension.js",
   "contributes": {
     "menus": {
+      "editor/context": [
+        {
+          "command": "harold-extension.helloWorld",
+          "group": "chatGpt@1"
+        },
+        {
+          "command": "harold-extension.catCoding.start",
+          "group": "chatGpt@3"
+        },
+        {
+          "command": "harold-extension.echo_selection",
+          "group": "chatGpt@4",
+          "when": "editorHasSelection"
+        }
+      ],
       "editor/title": [
         {
           "when": "resourceLangId == markdown || resourceLangId == html",
           "command": "harold-extension.catCoding.start",
           "alt": "markdown.showPreviewToSide",
           "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "calicoColors.clearColors",
+          "group": "navigation",
+          "when": "view == calicoColors.colorsView"
+        },
+        {
+          "command": "nodeDependencies.refreshEntry",
+          "when": "view == nodeDependencies",
+          "group": "navigation"
+        },
+        {
+          "command": "jsonOutline.renameNode",
+          "when": "view == jsonOutline"
+        },
+        {
+          "command": "nodeDependencies.addEntry",
+          "when": "view == nodeDependencies"
+        },
+        {
+          "command": "jsonOutline.refresh",
+          "when": "view == jsonOutline",
+          "group": "navigation"
+        },
+        {
+          "command": "ftpExplorer.refresh",
+          "when": "view == ftpExplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "nodeDependencies.editEntry",
+          "when": "view == nodeDependencies && viewItem == dependency",
+          "group": "inline"
+        },
+        {
+          "command": "nodeDependencies.deleteEntry",
+          "when": "view == nodeDependencies && viewItem == dependency"
+        },
+        {
+          "command": "jsonOutline.renameNode",
+          "when": "view == jsonOutline"
+        },
+        {
+          "command": "jsonOutline.refreshNode",
+          "when": "view == jsonOutline",
+          "group": "inline"
+        },
+        {
+          "command": "fileExplorer.refreshFile",
+          "when": "view == fileExplorer && viewItem == file",
+          "group": "inline"
         }
       ]
     },
@@ -32,14 +102,15 @@
         "command": "harold-extension.helloWorld",
         "when": "editorHasSelection",
         "group": "1_modification@1"
+      },
+      {
+        "command": "ftpExplorer.revealResource"
       }
     ],
     "viewsWelcome": [
       {
-        "submenu": "harold-extension.helloWorld",
-        "view": "explorer",
-        "contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n[Clone Repository](command:git.clone)\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm).",
-        "when": "workbenchState == empty"
+        "view": "workbench.explorer.emptyView",
+        "contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n[Clone Repository](command:git.clone)\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm)."
       }
     ],
     "walkthroughs": [
@@ -84,36 +155,232 @@
         }
       }
     },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vscode-chatgpt-view-container",
+          "title": "ChatGPT",
+          "icon": "images/openai-transparent.png"
+        },
+        {
+          "id": "package-explorer",
+          "title": "Package Explorer",
+          "icon": "media/dep.svg"
+        }
+      ]
+    },
+    "views": {
+      "vscode-chatgpt-view-container": [
+        {
+          "type": "webview",
+          "id": "vscode-chatgpt.view",
+          "name": "Conversation window"
+        }
+      ],
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "calicoColors.colorsView",
+          "name": "Calico Colors"
+        },
+        {
+          "id": "jsonOutline",
+          "name": "Json Outline",
+          "when": "jsonOutlineEnabled"
+        },
+        {
+          "id": "ftpExplorer",
+          "name": "FTP Explorer"
+        },
+        {
+          "id": "fileExplorer",
+          "name": "File Explorer"
+        },
+        {
+          "id": "testView",
+          "name": "Test View"
+        },
+        {
+          "id": "testViewDragAndDrop",
+          "name": "Test View Drag and Drop"
+        }
+      ],
+      "package-explorer": [
+        {
+          "id": "nodeDependencies",
+          "name": "Node Dependencies",
+          "icon": "media/dep.svg",
+          "contextualTitle": "Package Explorer"
+        }
+      ]
+    },
+    "configuration": [
+      {
+        "title": "ChatGPT",
+        "properties": {
+          "chatgpt.promptPrefix.addTests": {
+            "type": "string",
+            "default": "Implement tests for the following code",
+            "description": "The prompt prefix used for adding tests for the selected code"
+          },
+          "chatgpt.promptPrefix.findProblems": {
+            "type": "string",
+            "default": "Find problems with the following code",
+            "description": "The prompt prefix used for finding problems for the selected code"
+          },
+          "chatgpt.promptPrefix.optimize": {
+            "type": "string",
+            "default": "Optimize the following code",
+            "description": "The prompt prefix used for optimizing the selected code"
+          },
+          "chatgpt.promptPrefix.explain": {
+            "type": "string",
+            "default": "Explain the following code",
+            "description": "The prompt prefix used for explaining the selected code"
+          },
+          "chatgpt.response.showNotification": {
+            "type": "boolean",
+            "default": false,
+            "description": "Choose whether you'd like to receive a notification when ChatGPT bot responds to your query."
+          }
+        }
+      },
+      {
+        "title": "JSON Outline",
+        "properties": {
+          "jsonOutline.autorefresh": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
+    ],
     "commands": [
       {
         "command": "harold-extension.helloWorld",
-        "title": "HAA Hello World"
+        "title": "Hello World",
+        "category": "Harold"
       },
       {
         "command": "harold-extension.echo_selection",
-        "title": "HAA Echo selected"
+        "title": "Echo selected",
+        "category": "Harold"
       },
       {
         "command": "harold-extension.quickpick",
-        "title": "HAA Hello World Quick Pick"
+        "title": "Hello World Quick Pick",
+        "category": "Harold"
       },
       {
         "command": "harold-extension.catCoding.start",
         "title": "Start new cat coding session",
-        "category": "HAA Cat Coding"
+        "category": "Harold"
       },
       {
         "command": "harold-extension.catCoding.doRefactor",
         "title": "Cat coding refactoring",
-        "category": "HAA Cat Coding"
+        "category": "Harold"
       },
       {
         "command": "harold-extension.myAmazingExtension.persistWorkspaceData",
-        "title": "HAA persistWorkspaceData"
+        "title": "persistWorkspaceData",
+        "category": "Harold"
       },
       {
         "command": "harold-extension.myAmazingExtension.persistGlobalData",
-        "title": "HAA persistGlobalData"
+        "title": "persistGlobalData",
+        "category": "Harold"
+      },
+      {
+        "command": "calicoColors.addColor",
+        "title": "Add Color",
+        "category": "Calico Colors"
+      },
+      {
+        "command": "calicoColors.clearColors",
+        "title": "Clear Colors",
+        "category": "Calico Colors",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "nodeDependencies.refreshEntry",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "nodeDependencies.addEntry",
+        "title": "Add"
+      },
+      {
+        "command": "nodeDependencies.editEntry",
+        "title": "Edit",
+        "icon": {
+          "light": "resources/light/edit.svg",
+          "dark": "resources/dark/edit.svg"
+        }
+      },
+      {
+        "command": "nodeDependencies.deleteEntry",
+        "title": "Delete"
+      },
+      {
+        "command": "ftpExplorer.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "ftpExplorer.openFtpResource",
+        "title": "Open FTP Resource"
+      },
+      {
+        "command": "ftpExplorer.revealResource",
+        "title": "Reveal in FTP View"
+      },
+      {
+        "command": "jsonOutline.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "jsonOutline.refreshNode",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "jsonOutline.renameNode",
+        "title": "Rename"
+      },
+      {
+        "command": "fileExplorer.refreshFile",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "fileExplorer.openFile",
+        "title": "Open File"
+      },
+      {
+        "command": "testView.reveal",
+        "title": "Test View: Reveal"
+      },
+      {
+        "command": "testView.changeTitle",
+        "title": "Test View: Change Title"
       }
     ],
     "snippets": [
@@ -149,5 +416,10 @@
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "@vscode/test-electron": "^2.2.3"
+  },
+  "dependencies": {
+    "ftp": "^0.3.10",
+    "jsonc-parser": "^3.2.0",
+    "mkdirp": "^2.1.5"
   }
 }
