@@ -3,6 +3,13 @@
 import { TextEncoder } from 'util';
 import * as vscode from 'vscode';
 
+import { DepNodeProvider, Dependency } from './nodeDependencies';
+import { JsonOutlineProvider } from './jsonOutline';
+import { FtpExplorer } from './ftpExplorer';
+import { FileExplorer } from './fileExplorer';
+import { TestViewDragAndDrop } from './testViewDragAndDrop';
+import { TestView } from './testView';
+
 let interval_id: any;
 
 const cats = {
@@ -22,6 +29,7 @@ function showTime(context: vscode.ExtensionContext) {
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	const provider = new ColorsViewProvider(context.extensionUri);
 
 	showTime(context);
 
@@ -304,6 +312,60 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.window.onDidChangeTerminalState((terminalState) => {
 		console.log("terminalState: ", terminalState, terminalState.state)
 	})
+
+	context.subscriptions.push(
+		vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, provider));
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('calicoColors.addColor', () => {
+			provider.addColor();
+		}));
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('calicoColors.clearColors', () => {
+			provider.clearColors();
+		}));
+
+	// from tree-view-sample (START)
+	const rootPath = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
+		? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+
+	// Samples of `window.registerTreeDataProvider`
+	const nodeDependenciesProvider = new DepNodeProvider(rootPath);
+	vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
+	vscode.commands.registerCommand('nodeDependencies.refreshEntry', () => nodeDependenciesProvider.refresh());
+	vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
+	vscode.commands.registerCommand('nodeDependencies.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`));
+	vscode.commands.registerCommand('nodeDependencies.editEntry', (node: Dependency) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
+	vscode.commands.registerCommand('nodeDependencies.deleteEntry', (node: Dependency) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));
+
+	const jsonOutlineProvider = new JsonOutlineProvider(context);
+	vscode.window.registerTreeDataProvider('jsonOutline', jsonOutlineProvider);
+	vscode.commands.registerCommand('jsonOutline.refresh', () => jsonOutlineProvider.refresh());
+	vscode.commands.registerCommand('jsonOutline.refreshNode', offset => jsonOutlineProvider.refresh(offset));
+	vscode.commands.registerCommand('jsonOutline.renameNode', args => {
+		let offset = undefined;
+		if (args.selectedTreeItems && args.selectedTreeItems.length) {
+			offset = args.selectedTreeItems[0];
+		} else if (typeof args === 'number') {
+			// @ts-ignore
+			offset = args;
+		}
+		if (offset) {
+			jsonOutlineProvider.rename(offset);
+		}
+	});
+	vscode.commands.registerCommand('extension.openJsonSelection', range => jsonOutlineProvider.select(range));
+
+	// Samples of `window.createView`
+	new FtpExplorer(context);
+	new FileExplorer(context);
+
+	// Test View
+	new TestView(context);
+
+	new TestViewDragAndDrop(context);
+	// from tree-view-sample (END)
 }
 
 function updateWebviewForCat(panel: vscode.WebviewPanel, catName: keyof typeof cats) {
@@ -375,3 +437,101 @@ export function deactivate() {
 
 }
 
+class ColorsViewProvider implements vscode.WebviewViewProvider {
+
+	public static readonly viewType = 'calicoColors.colorsView';
+
+	private _view?: vscode.WebviewView;
+
+	constructor(
+		private readonly _extensionUri: vscode.Uri,
+	) { }
+
+	public resolveWebviewView(
+		webviewView: vscode.WebviewView,
+		context: vscode.WebviewViewResolveContext,
+		_token: vscode.CancellationToken,
+	) {
+		this._view = webviewView;
+
+		webviewView.webview.options = {
+			// Allow scripts in the webview
+			enableScripts: true,
+
+			localResourceRoots: [
+				this._extensionUri
+			]
+		};
+
+		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+
+		webviewView.webview.onDidReceiveMessage(data => {
+			switch (data.type) {
+				case 'colorSelected':
+					{
+						vscode.window.activeTextEditor?.insertSnippet(new vscode.SnippetString(`#${data.value}`));
+						break;
+					}
+			}
+		});
+	}
+
+	public addColor() {
+		if (this._view) {
+			this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+			this._view.webview.postMessage({ type: 'addColor' });
+		}
+	}
+
+	public clearColors() {
+		if (this._view) {
+			this._view.webview.postMessage({ type: 'clearColors' });
+		}
+	}
+
+	private _getHtmlForWebview(webview: vscode.Webview) {
+		// Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
+		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
+
+		// Do the same for the stylesheet.
+		const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
+		const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
+		const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
+
+		// Use a nonce to only allow a specific script to be run.
+		const nonce = getNonce();
+
+		return `<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<!--
+					Use a content security policy to only allow loading styles from our extension directory,
+					and only allow scripts that have a specific nonce.
+					(See the 'webview-sample' extension sample for img-src content security policy examples)
+				-->
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<link href="${styleResetUri}" rel="stylesheet">
+				<link href="${styleVSCodeUri}" rel="stylesheet">
+				<link href="${styleMainUri}" rel="stylesheet">
+				<title>Cat Colors</title>
+			</head>
+			<body>
+				<ul class="color-list">
+				</ul>
+				<button class="add-color-button">Add Color</button>
+				<script nonce="${nonce}" src="${scriptUri}"></script>
+			</body>
+			</html>`;
+	}
+}
+
+function getNonce() {
+	let text = '';
+	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for (let i = 0; i < 32; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
+}
