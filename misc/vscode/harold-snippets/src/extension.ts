@@ -124,15 +124,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let currentPanel: vscode.WebviewPanel | undefined = undefined;
 
-	const catCodingViewProvider = new CatCodingViewProvider(context);
-
-	vscode.window.registerWebviewViewProvider('catCoding', catCodingViewProvider);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('harold-extension.catCoding.start', () => {
-			catCodingViewProvider.show();
-		})
-	);
+	vscode.window.registerWebviewViewProvider('catCoding', new CatCodingViewProvider(context));
 
 	vscode.window.onDidOpenTerminal((terminal) => {
 		console.log("terminal: ", terminal)
@@ -141,12 +133,6 @@ export function activate(context: vscode.ExtensionContext) {
 	})
 
 	// vscode.window.createTerminal("My Terminal").show()
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('harold-extension.catCoding.doRefactor', () => {
-			catCodingViewProvider.refactor();
-		})
-	);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('harold-extension.myAmazingExtension.persistWorkspaceData', async () => {

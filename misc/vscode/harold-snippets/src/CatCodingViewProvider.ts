@@ -14,7 +14,7 @@ class CatCodingSerializer implements vscode.WebviewPanelSerializer {
 
     async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
         // `state` is the state persisted using `setState` inside the webview
-        console.log(`Got state: ${state}`);
+        console.log(`CatCodingViewProvider.ts:: deserializeWebviewPanel:: Got state: ${state}`);
 
         this.catCodingViewProvider.currentPanel = webviewPanel;
 
@@ -32,6 +32,7 @@ export default class CatCodingViewProvider implements vscode.WebviewViewProvider
     private _view?: vscode.WebviewView;
     currentPanel?: vscode.WebviewPanel;
     _extensionUri: vscode.Uri;
+    catState?: string;
 
     constructor(
         private context: vscode.ExtensionContext,
@@ -41,9 +42,22 @@ export default class CatCodingViewProvider implements vscode.WebviewViewProvider
 
         vscode.window.registerWebviewPanelSerializer('catCoding', new CatCodingSerializer(this));
 
+        context.subscriptions.push(
+            vscode.commands.registerCommand('harold-extension.catCoding.start', () => {
+                this.show();
+            })
+        );
+
+        context.subscriptions.push(
+            vscode.commands.registerCommand('harold-extension.catCoding.doRefactor', () => {
+                this.refactor();
+            })
+        );
     }
 
     show() {
+        console.log("CatCodingViewProvider:: show(): ", this.currentPanel)
+
         const columnToShowIn = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
@@ -61,6 +75,10 @@ export default class CatCodingViewProvider implements vscode.WebviewViewProvider
                     enableScripts: true,
                 }
             );
+
+            this.currentPanel.webview.html = this._getHtmlForWebview();
+
+            this.setupNewWebView(this.currentPanel);
         }
     }
 
@@ -82,19 +100,29 @@ export default class CatCodingViewProvider implements vscode.WebviewViewProvider
         panel.onDidChangeViewState(
             e => {
                 const panel = e.webviewPanel;
-                console.log("panel.viewColumn: ", panel.viewColumn)
+                console.log("CatCodingViewProvider.ts:: onDidChangeViewState:: panel.viewColumn: ", panel.viewColumn, "this.catState:", this.catState)
+
+                let new_state;
+
                 switch (panel.viewColumn) {
                     case vscode.ViewColumn.One:
-                        this.updateWebviewForCat(panel, 'Coding Cat');
-                        return;
+                        new_state = 'Coding Cat'
+                        break;
 
                     case vscode.ViewColumn.Two:
-                        this.updateWebviewForCat(panel, 'Compiling Cat');
-                        return;
+                        new_state = 'Compiling Cat'
+                        break;
 
                     case vscode.ViewColumn.Three:
-                        this.updateWebviewForCat(panel, 'Testing Cat');
-                        return;
+                        new_state = 'Testing Cat'
+                        break;
+                }
+
+                if (new_state && new_state !== this.catState) {
+                    this.updateWebviewForCat(panel, new_state);
+                }
+                else {
+                    console.log("CatCodingViewProvider.ts:: onDidChangeViewState:: no change")
                 }
             },
             null,
@@ -118,6 +146,8 @@ export default class CatCodingViewProvider implements vscode.WebviewViewProvider
     }
 
     resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, token: vscode.CancellationToken): void | Thenable<void> {
+        console.log("CatCodingViewProvider:: resolveWebviewView(): ", webviewView, context, token)
+
         this._view = webviewView;
 
         webviewView.webview.options = {
@@ -128,11 +158,11 @@ export default class CatCodingViewProvider implements vscode.WebviewViewProvider
                 this._extensionUri
             ]
         };
-
-        webviewView.webview.html = this._getHtmlForWebview();
     }
 
     _getHtmlForWebview(cat: keyof typeof cats = 'Coding Cat') {
+        this.catState = cat
+
         return `<!DOCTYPE html>
       <html lang="en">
       <head>
