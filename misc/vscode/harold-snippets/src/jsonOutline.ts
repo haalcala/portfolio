@@ -95,6 +95,7 @@ export class JsonOutlineProvider implements vscode.TreeDataProvider<number> {
 	}
 
 	getChildren(offset?: number): Thenable<number[]> {
+		console.log("jsonOutline.ts:: getChildren:")
 		if (offset && this.tree) {
 			const path = json.getLocation(this.text, offset).path;
 			const node = json.findNodeAtLocation(this.tree, path);
@@ -106,6 +107,7 @@ export class JsonOutlineProvider implements vscode.TreeDataProvider<number> {
 	}
 
 	private getChildrenOffsets(node: json.Node): number[] {
+		console.log("jsonOutline.ts:: getChildrenOffsets:")
 		const offsets: number[] = [];
 		if (node.children && this.tree) {
 			for (const child of node.children) {
@@ -120,6 +122,8 @@ export class JsonOutlineProvider implements vscode.TreeDataProvider<number> {
 	}
 
 	getTreeItem(offset: number): vscode.TreeItem {
+		console.log("jsonOutline.ts:: getTreeItem:")
+
 		if (!this.tree) {
 			throw new Error('Invalid tree');
 		}
@@ -174,6 +178,8 @@ export class JsonOutlineProvider implements vscode.TreeDataProvider<number> {
 	}
 
 	private getLabel(node: json.Node): string {
+		console.log("jsonOutline.ts:: getLabel:")
+
 		if (node.parent?.type === 'array') {
 			const prefix = node.parent.children?.indexOf(node).toString();
 			if (node.type === 'object') {
