@@ -67,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	});
 
-	let echo = vscode.commands.registerCommand('harold-extension.echo_selection', () => {
+	let echo = vscode.commands.registerCommand('harold-extension.echo_selection', async () => {
 		const editor = vscode.window.activeTextEditor
 
 		if (!editor) {
@@ -79,9 +79,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 		console.log(msg)
 
-		vscode.window.showInformationMessage(msg || "No text selected")
+		const resp = await vscode.window.showInformationMessage(msg || "No text selected", "Yes", "No")
 
-		if (msg) {
+		if (resp === "Yes" && msg) {
 			editor.insertSnippet(new vscode.SnippetString("<h1>${1:${TM_SELECTED_TEXT}}$0</h1>"))
 		}
 	});
@@ -139,7 +139,7 @@ export function activate(context: vscode.ExtensionContext) {
 						enableScripts: true,
 					}
 				);
-				currentPanel.webview.html = getWebviewContent('Coding Cat');
+				currentPanel.webview.html = getWebviewContent();
 
 				setupNewWebView(currentPanel);
 			}
@@ -214,6 +214,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 	vscode.window.registerWebviewPanelSerializer('catCoding', new CatCodingSerializer());
 
+	vscode.window.onDidOpenTerminal((terminal) => {
+		console.log("terminal: ", terminal)
+
+		// terminal.sendText("echo 'hello world'")
+	})
+
+	// vscode.window.createTerminal("My Terminal").show()
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand('harold-extension.catCoding.doRefactor', () => {
 			if (!currentPanel) {
@@ -271,6 +279,31 @@ export function activate(context: vscode.ExtensionContext) {
 			const writeData = new TextEncoder().encode(JSON.stringify({ now: Date.now() }));
 			vscode.workspace.fs.writeFile(workspaceData, writeData);
 		}));
+
+	vscode.window.onDidChangeActiveTextEditor((editor) => {
+		console.log("editor: ", editor)
+	})
+
+	vscode.window.onDidChangeActiveColorTheme((theme) => {
+		console.log("theme: ", theme)
+	})
+
+	vscode.languages.registerHoverProvider(
+		{ scheme: 'typescript', },
+		{
+			provideHover(doc: vscode.TextDocument) {
+				return new vscode.Hover('For *all* TypeScript documents.');
+			}
+		}
+	);
+
+	vscode.window.onDidChangeWindowState((windowState) => {
+		console.log("windowState: ", windowState)
+	})
+
+	vscode.window.onDidChangeTerminalState((terminalState) => {
+		console.log("terminalState: ", terminalState, terminalState.state)
+	})
 }
 
 function updateWebviewForCat(panel: vscode.WebviewPanel, catName: keyof typeof cats) {

@@ -8,7 +8,8 @@
     "vscode": "^1.76.0"
   },
   "categories": [
-    "Other", "Snippets"
+    "Other",
+    "Snippets"
   ],
   "activationEvents": [
     "onStartupFinished",
@@ -16,36 +17,103 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == markdown || resourceLangId == html",
+          "command": "harold-extension.catCoding.start",
+          "alt": "markdown.showPreviewToSide",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commandPalette": [
+      {
+        "command": "harold-extension.helloWorld",
+        "when": "editorHasSelection",
+        "group": "1_modification@1"
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "submenu": "harold-extension.helloWorld",
+        "view": "explorer",
+        "contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n[Clone Repository](command:git.clone)\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm).",
+        "when": "workbenchState == empty"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "submenu": "harold-extension.helloWorld",
+        "id": "sample",
+        "title": "Sample",
+        "description": "A sample walkthrough",
+        "steps": [
+          {
+            "id": "runcommand",
+            "title": "Run Command",
+            "description": "This step will run a command and check off once it has been run.\n[Run Command](command:getting-started-sample.runCommand)",
+            "media": {
+              "image": "media/image.png",
+              "altText": "Empty image"
+            },
+            "completionEvents": [
+              "onCommand:getting-started-sample.runCommand"
+            ]
+          },
+          {
+            "id": "changesetting",
+            "title": "Change Setting",
+            "description": "This step will change a setting and check off when the setting has changed\n[Change Setting](command:getting-started-sample.changeSetting)",
+            "media": {
+              "markdown": "media/markdown.md"
+            },
+            "completionEvents": [
+              "onSettingChanged:getting-started-sample.sampleSetting"
+            ]
+          }
+        ]
+      }
+    ],
+    "icons": {
+      "distro-ubuntu": {
+        "description": "Ubuntu icon",
+        "default": {
+          "fontPath": "./distroicons.woff",
+          "fontCharacter": "\\E001"
+        }
+      }
+    },
     "commands": [
       {
         "command": "harold-extension.helloWorld",
-        "title": "Harold: Hello World"
+        "title": "HAA Hello World"
       },
       {
         "command": "harold-extension.echo_selection",
-        "title": "Harold: Echo selected"
+        "title": "HAA Echo selected"
       },
       {
         "command": "harold-extension.quickpick",
-        "title": "Harold: Hello World Quick Pick"
+        "title": "HAA Hello World Quick Pick"
       },
       {
         "command": "harold-extension.catCoding.start",
         "title": "Start new cat coding session",
-        "category": "Harold: Cat Coding"
+        "category": "HAA Cat Coding"
       },
       {
         "command": "harold-extension.catCoding.doRefactor",
         "title": "Cat coding refactoring",
-        "category": "Harold: Cat Coding"
+        "category": "HAA Cat Coding"
       },
       {
         "command": "harold-extension.myAmazingExtension.persistWorkspaceData",
-        "title": "Harold: persistWorkspaceData"
+        "title": "HAA persistWorkspaceData"
       },
       {
         "command": "harold-extension.myAmazingExtension.persistGlobalData",
-        "title": "Harold: persistGlobalData"
+        "title": "HAA persistGlobalData"
       }
     ],
     "snippets": [
