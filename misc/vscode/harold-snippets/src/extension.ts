@@ -10,7 +10,7 @@ import { FileExplorer } from './fileExplorer';
 import { TestViewDragAndDrop } from './testViewDragAndDrop';
 import { TestView } from './testView';
 import ColorsViewProvider from './ColorsViewProvider';
-import { cats } from './CatCodingViewProvider';
+import CatCodingViewProvider from './CatCodingViewProvider';
 
 let interval_id: any;
 
@@ -124,99 +124,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let currentPanel: vscode.WebviewPanel | undefined = undefined;
 
+	const catCodingViewProvider = new CatCodingViewProvider(context);
+
+	vscode.window.registerWebviewViewProvider('catCoding', catCodingViewProvider);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand('harold-extension.catCoding.start', () => {
-			const columnToShowIn = vscode.window.activeTextEditor
-				? vscode.window.activeTextEditor.viewColumn
-				: undefined;
-
-			if (currentPanel) {
-				// If we already have a panel, show it in the target column
-				currentPanel.reveal(columnToShowIn);
-			} else {
-				// Otherwise, create a new panel
-				currentPanel = vscode.window.createWebviewPanel(
-					'catCoding',
-					'Cat Coding',
-					columnToShowIn as any,
-					{
-						enableScripts: true,
-					}
-				);
-				currentPanel.webview.html = getWebviewContent();
-
-				setupNewWebView(currentPanel);
-			}
+			catCodingViewProvider.show();
 		})
 	);
-
-	function setupNewWebView(panel: vscode.WebviewPanel) {
-		// Reset when the current panel is closed
-		panel.onDidDispose(
-			() => {
-				currentPanel = undefined;
-			},
-			null,
-			context.subscriptions
-		);
-
-		// Update contents based on view state changes
-		panel.onDidChangeViewState(
-			e => {
-				const panel = e.webviewPanel;
-				console.log("panel.viewColumn: ", panel.viewColumn)
-				switch (panel.viewColumn) {
-					case vscode.ViewColumn.One:
-						updateWebviewForCat(panel, 'Coding Cat');
-						return;
-
-					case vscode.ViewColumn.Two:
-						updateWebviewForCat(panel, 'Compiling Cat');
-						return;
-
-					case vscode.ViewColumn.Three:
-						updateWebviewForCat(panel, 'Testing Cat');
-						return;
-				}
-			},
-			null,
-			context.subscriptions
-		);
-
-		panel.webview.onDidReceiveMessage(
-			message => {
-				console.log("message: ", message);
-
-				switch (message.command) {
-					case 'alert':
-						vscode.window.showInformationMessage(message.text);
-						return;
-				}
-			},
-			undefined,
-			context.subscriptions
-		);
-
-	}
-
-	class CatCodingSerializer implements vscode.WebviewPanelSerializer {
-		async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-			// `state` is the state persisted using `setState` inside the webview
-			console.log(`Got state: ${state}`);
-
-			currentPanel = webviewPanel;
-
-			// Restore the content of our webview.
-			//
-			// Make sure we hold on to the `webviewPanel` passed in here and
-			// also restore any event listeners we need on it.
-			webviewPanel.webview.html = getWebviewContent();
-
-			setupNewWebView(webviewPanel);
-		}
-	}
-
-	vscode.window.registerWebviewPanelSerializer('catCoding', new CatCodingSerializer());
 
 	vscode.window.onDidOpenTerminal((terminal) => {
 		console.log("terminal: ", terminal)
@@ -228,17 +144,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('harold-extension.catCoding.doRefactor', () => {
-			if (!currentPanel) {
-				return;
-			}
-
-			// Send a message to our webview.
-			// You can send any JSON serializable data.
-			currentPanel.webview.postMessage({ command: 'refactor', payload: { date: new Date() } });
+			catCodingViewProvider.refactor();
 		})
 	);
-
-
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('harold-extension.myAmazingExtension.persistWorkspaceData', async () => {
@@ -362,61 +270,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	new TestViewDragAndDrop(context);
 	// from tree-view-sample (END)
-}
-
-
-function getWebviewContent(cat: keyof typeof cats = 'Coding Cat') {
-	return `<!DOCTYPE html>
-  <html lang="en">
-  <head>
-	  <meta charset="UTF-8">
-	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	  <title>Cat Coding</title>
-  </head>
-  <body>
-	  <img id="cat-container" src="${cats[cat]}" width="300" />
-
-	  <h1 id="lines-of-code-counter">0</h1>
-	  
-	  <script>
-	  const vscode = acquireVsCodeApi();
-
-	  const previousState = vscode.getState();
-
-	  const counter = document.getElementById('lines-of-code-counter');
-
-	  let count = 0;
-	  setInterval(() => {
-		  counter.textContent = count++;
-	  }, 100);
-
-	  vscode.postMessage({
-		command: 'alert',
-		text: '🐛  on line ' + count,
-		payload: {previousState: previousState}
-	  })
-
-	  // Handle the message inside the webview
-	  window.addEventListener('message', event => {
-		  console.log("event: ", event)
-
-		  const message = event.data; // The JSON data our extension sent
-
-		  switch (message.command) {
-			  case 'refactor':
-				  count = Math.ceil(count * 0.5);
-				  counter.textContent = count;
-				  vscode.postMessage({
-					command: 'alert',
-					text: '🐛  on line ' + count,
-					payload: {msg: 'hello', previousState: previousState}
-				  })
-				  break;
-		  }
-	  });
-  </script>
-  </body>
-  </html>`;
 }
 
 // This method is called when your extension is deactivated

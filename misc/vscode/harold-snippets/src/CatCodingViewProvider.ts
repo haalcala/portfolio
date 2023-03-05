@@ -7,33 +7,65 @@ export const cats = {
     'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
 };
 
+
+
+class CatCodingSerializer implements vscode.WebviewPanelSerializer {
+    constructor(private catCodingViewProvider: CatCodingViewProvider) { }
+
+    async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
+        // `state` is the state persisted using `setState` inside the webview
+        console.log(`Got state: ${state}`);
+
+        this.catCodingViewProvider.currentPanel = webviewPanel;
+
+        // Restore the content of our webview.
+        //
+        // Make sure we hold on to the `webviewPanel` passed in here and
+        // also restore any event listeners we need on it.
+        webviewPanel.webview.html = this.catCodingViewProvider._getHtmlForWebview();
+
+        this.catCodingViewProvider.setupNewWebView(webviewPanel);
+    }
+}
+
 export default class CatCodingViewProvider implements vscode.WebviewViewProvider {
     private _view?: vscode.WebviewView;
-    private context: vscode.ExtensionContext;
     currentPanel?: vscode.WebviewPanel;
+    _extensionUri: vscode.Uri;
 
     constructor(
-        private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext,
+        private context: vscode.ExtensionContext,
+    ) {
+        this.context = context;
+        this._extensionUri = context.extensionUri;
 
+        vscode.window.registerWebviewPanelSerializer('catCoding', new CatCodingSerializer(this));
 
-    ) { this.context = context; }
+    }
 
-    createWebviewView() {
+    show() {
         const columnToShowIn = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
 
-        this.currentPanel = vscode.window.createWebviewPanel(
-            'catCoding',
-            'Cat Coding',
-            columnToShowIn as any,
-            {
-                enableScripts: true,
-            }
-        );
-        this.currentPanel.webview.html = this._getHtmlForWebview();
+        if (this.currentPanel) {
+            // If we already have a panel, show it in the target column
+            this.currentPanel.reveal(columnToShowIn);
+        } else {
+            // Otherwise, create a new panel
+            this.currentPanel = vscode.window.createWebviewPanel(
+                'catCoding',
+                'Cat Coding',
+                columnToShowIn as any,
+                {
+                    enableScripts: true,
+                }
+            );
+        }
+    }
 
-        this.setupNewWebView(this.currentPanel);
+    refactor() {
+        this.currentPanel?.webview.postMessage({ command: 'refactor', payload: { date: new Date() } });
     }
 
     setupNewWebView(panel: vscode.WebviewPanel) {
@@ -100,7 +132,7 @@ export default class CatCodingViewProvider implements vscode.WebviewViewProvider
         webviewView.webview.html = this._getHtmlForWebview();
     }
 
-    private _getHtmlForWebview(cat: keyof typeof cats = 'Coding Cat') {
+    _getHtmlForWebview(cat: keyof typeof cats = 'Coding Cat') {
         return `<!DOCTYPE html>
       <html lang="en">
       <head>
