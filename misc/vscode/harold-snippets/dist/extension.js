@@ -213,6 +213,7 @@ class JsonOutlineProvider {
         }
     }
     onDocumentChanged(changeEvent) {
+        console.log("jsonOutline.ts:: onDocumentChanged:");
         if (this.tree && this.autoRefresh && changeEvent.document.uri.toString() === this.editor?.document.uri.toString()) {
             for (const change of changeEvent.contentChanges) {
                 const path = json.getLocation(this.text, this.editor.document.offsetAt(change.range.start)).path;
@@ -233,6 +234,7 @@ class JsonOutlineProvider {
         }
     }
     getChildren(offset) {
+        console.log("jsonOutline.ts:: getChildren:");
         if (offset && this.tree) {
             const path = json.getLocation(this.text, offset).path;
             const node = json.findNodeAtLocation(this.tree, path);
@@ -244,6 +246,7 @@ class JsonOutlineProvider {
         }
     }
     getChildrenOffsets(node) {
+        console.log("jsonOutline.ts:: getChildrenOffsets:");
         const offsets = [];
         if (node.children && this.tree) {
             for (const child of node.children) {
@@ -257,6 +260,7 @@ class JsonOutlineProvider {
         return offsets;
     }
     getTreeItem(offset) {
+        console.log("jsonOutline.ts:: getTreeItem:");
         if (!this.tree) {
             throw new Error('Invalid tree');
         }
@@ -307,6 +311,7 @@ class JsonOutlineProvider {
         return null;
     }
     getLabel(node) {
+        console.log("jsonOutline.ts:: getLabel:");
         if (node.parent?.type === 'array') {
             const prefix = node.parent.children?.indexOf(node).toString();
             if (node.type === 'object') {
@@ -12787,6 +12792,238 @@ function getNodeType(value) {
 }
 
 
+/***/ }),
+/* 60 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const vscode = __webpack_require__(1);
+const GetNonce_1 = __webpack_require__(61);
+class ColorsViewProvider {
+    constructor(_extensionUri) {
+        this._extensionUri = _extensionUri;
+    }
+    resolveWebviewView(webviewView, context, _token) {
+        this._view = webviewView;
+        webviewView.webview.options = {
+            // Allow scripts in the webview
+            enableScripts: true,
+            localResourceRoots: [
+                this._extensionUri
+            ]
+        };
+        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+        webviewView.webview.onDidReceiveMessage(data => {
+            switch (data.type) {
+                case 'colorSelected':
+                    {
+                        vscode.window.activeTextEditor?.insertSnippet(new vscode.SnippetString(`#${data.value}`));
+                        break;
+                    }
+            }
+        });
+    }
+    addColor() {
+        if (this._view) {
+            this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
+            this._view.webview.postMessage({ type: 'addColor' });
+        }
+    }
+    clearColors() {
+        if (this._view) {
+            this._view.webview.postMessage({ type: 'clearColors' });
+        }
+    }
+    _getHtmlForWebview(webview) {
+        // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
+        const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
+        // Do the same for the stylesheet.
+        const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
+        const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
+        const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
+        // Use a nonce to only allow a specific script to be run.
+        const nonce = (0, GetNonce_1.getNonce)();
+        return `<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<!--
+					Use a content security policy to only allow loading styles from our extension directory,
+					and only allow scripts that have a specific nonce.
+					(See the 'webview-sample' extension sample for img-src content security policy examples)
+				-->
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<link href="${styleResetUri}" rel="stylesheet">
+				<link href="${styleVSCodeUri}" rel="stylesheet">
+				<link href="${styleMainUri}" rel="stylesheet">
+				<title>Cat Colors</title>
+			</head>
+			<body>
+				<ul class="color-list">
+				</ul>
+				<button class="add-color-button">Add Color</button>
+				<script nonce="${nonce}" src="${scriptUri}"></script>
+			</body>
+			</html>`;
+    }
+}
+exports["default"] = ColorsViewProvider;
+ColorsViewProvider.viewType = 'calicoColors.colorsView';
+
+
+/***/ }),
+/* 61 */
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getNonce = void 0;
+function getNonce() {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
+exports.getNonce = getNonce;
+
+
+/***/ }),
+/* 62 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.cats = void 0;
+const vscode = __webpack_require__(1);
+exports.cats = {
+    'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
+    'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
+    'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
+};
+class CatCodingViewProvider {
+    constructor(_extensionUri, context) {
+        this._extensionUri = _extensionUri;
+        this.context = context;
+    }
+    createWebviewView() {
+        const columnToShowIn = vscode.window.activeTextEditor
+            ? vscode.window.activeTextEditor.viewColumn
+            : undefined;
+        this.currentPanel = vscode.window.createWebviewPanel('catCoding', 'Cat Coding', columnToShowIn, {
+            enableScripts: true,
+        });
+        this.currentPanel.webview.html = this._getHtmlForWebview();
+        this.setupNewWebView(this.currentPanel);
+    }
+    setupNewWebView(panel) {
+        // Reset when the current panel is closed
+        panel.onDidDispose(() => {
+            this.currentPanel = undefined;
+        }, null, this.context?.subscriptions);
+        // Update contents based on view state changes
+        panel.onDidChangeViewState(e => {
+            const panel = e.webviewPanel;
+            console.log("panel.viewColumn: ", panel.viewColumn);
+            switch (panel.viewColumn) {
+                case vscode.ViewColumn.One:
+                    this.updateWebviewForCat(panel, 'Coding Cat');
+                    return;
+                case vscode.ViewColumn.Two:
+                    this.updateWebviewForCat(panel, 'Compiling Cat');
+                    return;
+                case vscode.ViewColumn.Three:
+                    this.updateWebviewForCat(panel, 'Testing Cat');
+                    return;
+            }
+        }, null, this.context.subscriptions);
+        panel.webview.onDidReceiveMessage(message => {
+            console.log("message: ", message);
+            switch (message.command) {
+                case 'alert':
+                    vscode.window.showInformationMessage(message.text);
+                    return;
+            }
+        }, undefined, this.context.subscriptions);
+    }
+    resolveWebviewView(webviewView, context, token) {
+        this._view = webviewView;
+        webviewView.webview.options = {
+            // Allow scripts in the webview
+            enableScripts: true,
+            localResourceRoots: [
+                this._extensionUri
+            ]
+        };
+        webviewView.webview.html = this._getHtmlForWebview();
+    }
+    _getHtmlForWebview(cat = 'Coding Cat') {
+        return `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Cat Coding</title>
+      </head>
+      <body>
+          <img id="cat-container" src="${exports.cats[cat]}" width="300" />
+    
+          <h1 id="lines-of-code-counter">0</h1>
+          
+          <script>
+          const vscode = acquireVsCodeApi();
+    
+          const previousState = vscode.getState();
+    
+          const counter = document.getElementById('lines-of-code-counter');
+    
+          let count = 0;
+          setInterval(() => {
+              counter.textContent = count++;
+          }, 100);
+    
+          vscode.postMessage({
+            command: 'alert',
+            text: '🐛  on line ' + count,
+            payload: {previousState: previousState}
+          })
+    
+          // Handle the message inside the webview
+          window.addEventListener('message', event => {
+              console.log("event: ", event)
+    
+              const message = event.data; // The JSON data our extension sent
+    
+              switch (message.command) {
+                  case 'refactor':
+                      count = Math.ceil(count * 0.5);
+                      counter.textContent = count;
+                      vscode.postMessage({
+                        command: 'alert',
+                        text: '🐛  on line ' + count,
+                        payload: {msg: 'hello', previousState: previousState}
+                      })
+                      break;
+              }
+          });
+      </script>
+      </body>
+      </html>`;
+    }
+    updateWebviewForCat(panel, catName) {
+        panel.title = catName;
+        panel.webview.html = this._getHtmlForWebview(catName);
+    }
+}
+exports["default"] = CatCodingViewProvider;
+
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -12862,12 +13099,9 @@ const ftpExplorer_1 = __webpack_require__(8);
 const fileExplorer_1 = __webpack_require__(9);
 const testViewDragAndDrop_1 = __webpack_require__(28);
 const testView_1 = __webpack_require__(29);
+const ColorsViewProvider_1 = __webpack_require__(60);
+const CatCodingViewProvider_1 = __webpack_require__(62);
 let interval_id;
-const cats = {
-    'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
-    'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
-    'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
-};
 function showTime(context) {
     vscode.window.showInformationMessage('This is the interval !!!!!!!!!! ' + new Date());
     console.log(process.env.PWD);
@@ -12876,7 +13110,7 @@ function showTime(context) {
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 function activate(context) {
-    const provider = new ColorsViewProvider(context.extensionUri);
+    const provider = new ColorsViewProvider_1.default(context.extensionUri);
     showTime(context);
     // interval_id = setInterval(() => {
     // 	showTime(context);
@@ -13070,7 +13304,7 @@ function activate(context) {
     vscode.window.onDidChangeTerminalState((terminalState) => {
         console.log("terminalState: ", terminalState, terminalState.state);
     });
-    context.subscriptions.push(vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, provider));
+    context.subscriptions.push(vscode.window.registerWebviewViewProvider(ColorsViewProvider_1.default.viewType, provider));
     context.subscriptions.push(vscode.commands.registerCommand('calicoColors.addColor', () => {
         provider.addColor();
     }));
@@ -13115,10 +13349,6 @@ function activate(context) {
     // from tree-view-sample (END)
 }
 exports.activate = activate;
-function updateWebviewForCat(panel, catName) {
-    panel.title = catName;
-    panel.webview.html = getWebviewContent(catName);
-}
 function getWebviewContent(cat = 'Coding Cat') {
     return `<!DOCTYPE html>
   <html lang="en">
@@ -13128,7 +13358,7 @@ function getWebviewContent(cat = 'Coding Cat') {
 	  <title>Cat Coding</title>
   </head>
   <body>
-	  <img id="cat-container" src="${cats[cat]}" width="300" />
+	  <img id="cat-container" src="${CatCodingViewProvider_1.cats[cat]}" width="300" />
 
 	  <h1 id="lines-of-code-counter">0</h1>
 	  
@@ -13180,84 +13410,6 @@ function deactivate() {
     }
 }
 exports.deactivate = deactivate;
-class ColorsViewProvider {
-    constructor(_extensionUri) {
-        this._extensionUri = _extensionUri;
-    }
-    resolveWebviewView(webviewView, context, _token) {
-        this._view = webviewView;
-        webviewView.webview.options = {
-            // Allow scripts in the webview
-            enableScripts: true,
-            localResourceRoots: [
-                this._extensionUri
-            ]
-        };
-        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-        webviewView.webview.onDidReceiveMessage(data => {
-            switch (data.type) {
-                case 'colorSelected':
-                    {
-                        vscode.window.activeTextEditor?.insertSnippet(new vscode.SnippetString(`#${data.value}`));
-                        break;
-                    }
-            }
-        });
-    }
-    addColor() {
-        if (this._view) {
-            this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
-            this._view.webview.postMessage({ type: 'addColor' });
-        }
-    }
-    clearColors() {
-        if (this._view) {
-            this._view.webview.postMessage({ type: 'clearColors' });
-        }
-    }
-    _getHtmlForWebview(webview) {
-        // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
-        const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
-        // Do the same for the stylesheet.
-        const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
-        const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
-        const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
-        // Use a nonce to only allow a specific script to be run.
-        const nonce = getNonce();
-        return `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<!--
-					Use a content security policy to only allow loading styles from our extension directory,
-					and only allow scripts that have a specific nonce.
-					(See the 'webview-sample' extension sample for img-src content security policy examples)
-				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<link href="${styleResetUri}" rel="stylesheet">
-				<link href="${styleVSCodeUri}" rel="stylesheet">
-				<link href="${styleMainUri}" rel="stylesheet">
-				<title>Cat Colors</title>
-			</head>
-			<body>
-				<ul class="color-list">
-				</ul>
-				<button class="add-color-button">Add Color</button>
-				<script nonce="${nonce}" src="${scriptUri}"></script>
-			</body>
-			</html>`;
-    }
-}
-ColorsViewProvider.viewType = 'calicoColors.colorsView';
-function getNonce() {
-    let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 32; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-}
 
 })();
 

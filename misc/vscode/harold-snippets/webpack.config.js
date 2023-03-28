@@ -8,7 +8,7 @@ const path = require('path');
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
 
 /** @type WebpackConfig */
-const extensionConfig = {
+module.exports = (env, argv) => ({
   target: 'node', // VS Code extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
 	mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
 
@@ -25,7 +25,7 @@ const extensionConfig = {
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
   },
   module: {
     rules: [
@@ -37,12 +37,25 @@ const extensionConfig = {
             loader: 'ts-loader'
           }
         ]
-      }
+    },
+    // Allow importing CSS modules:
+    {
+      test: /\.css$/,
+      use: [
+        'style-loader',
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 1,
+            modules: true,
+          },
+        },
+      ],
+    },
     ]
   },
-  devtool: 'nosources-source-map',
+  devtool: argv.mode === 'production' ? false : 'inline-source-map',
   infrastructureLogging: {
     level: "log", // enables logging required for problem matchers
   },
-};
-module.exports = [ extensionConfig ];
+})
