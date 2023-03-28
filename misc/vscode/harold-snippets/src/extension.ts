@@ -11,6 +11,7 @@ import { TestViewDragAndDrop } from './testViewDragAndDrop';
 import { TestView } from './testView';
 import ColorsViewProvider from './ColorsViewProvider';
 import CatCodingViewProvider from './CatCodingViewProvider';
+import LeftPanelWebview from './LeftPanelWebview';
 
 let interval_id: any;
 
@@ -34,6 +35,13 @@ export function activate(context: vscode.ExtensionContext) {
 	// }, 60000);
 
 	// console.log(process);
+
+	// const leftPanelWebViewProvider = new LeftPanelWebview(context?.extensionUri, {});
+    // let view = vscode.window.registerWebviewViewProvider(
+    //     EXTENSION_CONSTANT.LEFT_PANEL_WEBVIEW_ID,
+    //     leftPanelWebViewProvider,
+    // );
+    // context.subscriptions.push(view);
 
 
 	const { spawn } = require('node:child_process');
