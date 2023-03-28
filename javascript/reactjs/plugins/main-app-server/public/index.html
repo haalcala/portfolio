@@ -1,0 +1,68 @@
+<!-- create html page with a button -->
+<html>
+    <head>
+        <title>My First HTML Page</title>
+        <link rel="stylesheet" href="style.css">
+        <script lang="javascript">
+            var loaded_plugins = {}
+
+            var plugin_loaded = false
+
+            some_global_vars = {
+                "test": 0
+            }
+
+            a = 1
+
+            function loadPlugin() {
+                a = a + 1
+                console.log(a)
+
+                if (!plugin_loaded) {
+                    // add a script element in the header
+                    var script = document.createElement('script');
+                    script.src = '/static/plugins/plugin1/js/main.js';
+                    script.id = 'counter.js'
+                    document.head.appendChild(script);
+                }
+            }
+
+            // a function to register a element to be rendered in 'actions' div
+            function registerAction(elem) {
+                var div = document.createElement('div');
+                div.id = 'counter.js-action'
+
+                var container = document.getElementById('actions')
+                
+                container.appendChild(div)
+
+                elem = eval(elem)
+
+                console.log("elem: ", elem)
+
+                eval(elem).render(div)
+            }
+
+            function unloadPlugin() {
+                // remove the script element from the header
+                var script = document.getElementById('counter.js')
+                document.head.removeChild(script);
+
+                plugin_loaded = false
+
+                var container = document.getElementById('actions')
+                script = document.getElementById('counter.js-action')
+                container.removeChild(script);
+            }
+        </script>
+    </head>
+    <body>
+        <h1>My First HTML Page</h1>
+        <p>My First Paragraph</p>
+        <button onclick="loadPlugin()">Load plugin!</button>
+        <button onclick="unloadPlugin()">Unload plugin!</button>
+        <div id="actions">
+
+        </div>
+    </body>
+</html>
