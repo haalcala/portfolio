@@ -6,7 +6,7 @@ app.use(express.static('public'));
 
 // app.use("/static/plugins/plugin1", express.static('../reactjs/main-app-plugin/dist'));
 // app.use("/static/plugins/plugin1", express.static('../reactjs/main-app-plugin/build/static'));
-app.use("/static/plugins/plugin1", express.static('../reactjs/main-app-plugin2/dist'));
+app.use("/static/plugins/plugin1", express.static('../main-app-plugin2/dist'));
 
 // start the server
 const port = 3009;
