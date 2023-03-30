@@ -106,7 +106,7 @@ function App() {
 
         this is the main app
       </div>
-      <button onClick={loadPlugin}>Load plugi</button>
+      <button onClick={loadPlugin}>Load plugin</button>
       <button onClick={unloadPlugin}>Unload plugin</button>
 
       // button to increase count
