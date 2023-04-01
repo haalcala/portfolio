@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=production; npx tailwindcss -i ./src/index.css -o ./dist/index.css",
     "build:watch": "webpack --mode=production --watch",
     "debug": "webpack --mode=none",
     "debug:watch": "webpack --mode=development --watch",
