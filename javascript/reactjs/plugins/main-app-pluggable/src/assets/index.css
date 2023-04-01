@@ -548,16 +548,16 @@ video {
   margin: 0.25rem;
 }
 
-.mt-10 {
-  margin-top: 2.5rem;
-}
-
 .block {
   display: block;
 }
 
 .inline {
   display: inline;
+}
+
+.flex {
+  display: flex;
 }
 
 .\!table {
@@ -594,15 +594,6 @@ video {
   border-width: 1px;
 }
 
-.border-solid {
-  border-style: solid;
-}
-
-.border-red-100 {
-  --tw-border-opacity: 1;
-  border-color: rgb(254 226 226 / var(--tw-border-opacity));
-}
-
 .uppercase {
   text-transform: uppercase;
 }
@@ -613,11 +604,6 @@ video {
 
 .italic {
   font-style: italic;
-}
-
-.text-red-500 {
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
 .outline {
@@ -728,4 +714,9 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.\[\&\>div\]\:text-red-500>div {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
