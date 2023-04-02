@@ -11,7 +11,7 @@ import { increment } from './features/counter/counterSlice';
 import reducers from './redux/reducers';
 // import { useSelector } from 'react-redux';
 
-import "index.css"
+// import "App.css"
 
 
 // @ts-ignore

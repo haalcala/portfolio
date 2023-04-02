@@ -27,10 +27,10 @@ const createPluginNamespaceReducer = (pluginId, reducer) => {
   };
 };
 
-const action1s = {}
-const action2s = {}
+// const action1s = {}
+// const action2s = {}
 
-const registries = {}
+// const registries = {}
 
 function App() {
 
@@ -47,10 +47,10 @@ function App() {
   console.log("state", state)
   console.log("counter", counter)
 
-  const [_registries, setRegistries] = useState<{ string: Registry } | {}>({})
+  const [registries, setRegistries] = useState<{ string: Registry } | {}>({})
 
-  // const [action1s, setAction1s] = useState({})
-  // const [action2s, setAction2s] = useState({})
+  const [action1s, setAction1s] = useState({})
+  const [action2s, setAction2s] = useState({})
 
   const additionalReducers = {}
 
@@ -65,14 +65,14 @@ function App() {
 
     registerAction1(elem: any) {
       console.log("registering element1", elem[0].props, typeof (elem))
-      // setAction1s({ ...action1s, [this.plugin.id]: elem })
       action1s[this.plugin.id] = elem
+      setAction1s({ ...action1s })
     }
 
     registerAction2(elem: any) {
       console.log("registering element2", elem[0].props, typeof (elem))
-      // setAction2s({ ...action2s, [this.plugin.id]: elem })
       action2s[this.plugin.id] = elem
+      setAction2s({ ...action2s })
     }
 
     registerReducer(reducer: any) {
@@ -102,39 +102,44 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    // @ts-ignore
+  const registerPlugin = useCallback((plugin) => {
+    console.log("1111 registries", registries)
 
-    // @ts-ignore
-    window.registerPlugin = (plugin) => {
-      console.log("1111 registries", registries)
-
-      if (registries[plugin.id]) {
-        return
-      }
-
-      const registry = new Registry(plugin)
-
-      registries[plugin.id] = registry
-
-      console.log('registering plugin ... plugin.id:', plugin.id, ', plugin.version:', plugin.version, ', plugin.name:', plugin.name, ', plugin:', plugin, ', registry:', registry)
-      console.log("plugin", plugin)
-
-      console.log("typeof(plugin)", typeof (plugin))
-      console.log("plugin.setup", plugin.setup)
-
-      setRegistries(
-        { ...registries }
-      )
-
-      console.log("2222 registries", registries)
-
-      plugin.setup(registry, store)
+    if (registries[plugin.id]) {
+      return
     }
-    return () => {
 
-    }
-  }, [])
+    const registry = new Registry(plugin)
+
+    registries[plugin.id] = registry
+
+    console.log('registering plugin ... plugin.id:', plugin.id, ', plugin.version:', plugin.version, ', plugin.name:', plugin.name, ', plugin:', plugin, ', registry:', registry)
+    console.log("plugin", plugin)
+
+    console.log("typeof(plugin)", typeof (plugin))
+    console.log("plugin.setup", plugin.setup)
+
+    setRegistries(
+      { ...registries }
+    )
+
+    console.log("2222 registries", registries)
+
+    plugin.setup(registry, store)
+  }, [registries, store]
+  )
+
+  // @ts-ignore
+  window.registerPlugin = registerPlugin;
+
+  // useEffect(() => {
+
+  //   // @ts-ignore
+  //   window.registerPlugin = 
+  //   return () => {
+
+  //   }
+  // }, [])
 
   const plugin_states = Object.keys(state as any).filter((key) => key.startsWith('plugin_')).map((key) => (state as any)[key])
 
@@ -143,7 +148,6 @@ function App() {
   function onLoad(err: any) {
     // @ts-ignore
     console.log('plugin loaded, err:', err, "this.id:", this.id)
-
   }
 
   function onError(err: any) {
@@ -152,19 +156,18 @@ function App() {
 
 
   function loadPlugin(plugin_id) {
-    console.log('loading plugin')
+    console.log('loading plugin');
 
-    {const script = document.getElementById(plugin_id);
-    if (script) {
-      return
-    }}
-    
+    {
+      const script = document.getElementById(plugin_id);
+      if (script) {
+        return
+      }
+    }
+
     const script = document.createElement('script');
-    // script.id = 'plugin_' + manifest.id;
     script.id = `${plugin_id}`
     script.type = 'text/javascript';
-    // script.src = getSiteURL() + bundlePath;
-    // script.src = "/static/plugins/plugin1/index.js";
     script.src = `/static/plugins/${plugin_id}/main.js`;
     script.onload = onLoad;
     script.onerror = onError;
@@ -196,12 +199,14 @@ function App() {
 
     delete registries[Plugin_ID]
 
-    setRegistries({...registries})
+    setRegistries({ ...registries })
 
-    // setAction1s({})
-    // setAction2s({})
     delete action1s[Plugin_ID]
     delete action2s[Plugin_ID]
+    setAction1s({ ...action1s })
+    setAction2s({ ...action2s })
+
+    console.log("document.getElementsByTagName('head')[0].children:", document.getElementsByTagName('head')[0].children)
   }
 
   function unloadAllPlugins() {
@@ -229,11 +234,14 @@ function App() {
       <button onClick={() => { console.log("----------------------------------------------------"); increment() }}>count is: {counter.value}</button>
 
       <div>
-        <div>
+        <div className=''>
           Action 1
         </div>
-        <div id="actions" className="flex flex-col">
-          {Object.values(action1s)}asdadsa
+        <div id="actions" className="flex flex-col bg-green-500 [&>*]:text-cyan-500">
+          {Object.values(action1s).map((action: any, actioni) => <div key={actioni}>{action}</div>)}asdadsa
+          <div>
+            sdflkajsf;akjdf;alskdfja;kdlfj
+          </div>
         </div>
       </div>
 
@@ -241,14 +249,13 @@ function App() {
         <div>
           Action 2
         </div>
-        <div id="actions2">{Object.values(action2s)}
-          <div>
-            sdflkajsf;akjdf;alskdfja;kdlfj
-          </div>
+        <div id="actions2">
+          {Object.values(action2s).map((action: any, actioni) => <div key={actioni}>{action}</div>)}
+
         </div>
       </div>
-      <div>
-        sdflkajsf;akjdf;alskdfja;kdlfj
+      <div className="this_custom_class">
+        Another main pluggable text
       </div>
     </div>
   )

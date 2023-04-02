@@ -1,3 +1,7 @@
-@tailwind base;
+/* @tailwind base; */
 @tailwind components;
 @tailwind utilities;
+
+.this_custom_class {
+    color: red;
+  }

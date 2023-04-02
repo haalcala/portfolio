@@ -58,7 +58,7 @@ function App({ title, ...props }: any) {
       Plugin body <button className="button_action" onClick={increment}>Plugin button</button>
       {JSON.stringify(counter)}
       <button className="plugin_button" onClick={handleClick}>Click me (Plugin-wide) {JSON.stringify(count)}</button>
-      <button onClick={() => setComponentCounter(componentCounter + 1)}>Click me (Component-wide) {componentCounter}</button>
+      <button className="this_custom_class" onClick={() => setComponentCounter(componentCounter + 1)}>Click me (Component-wide) {componentCounter}</button>
     </div>
   );
 }
