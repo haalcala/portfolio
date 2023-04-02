@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [viteCommonjs(), react()],
   server: {
     proxy: {
-      "/static/plugins/plugin1": {
+      "/static/plugins": {
         target: "http://127.0.0.1:3009",
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, '')

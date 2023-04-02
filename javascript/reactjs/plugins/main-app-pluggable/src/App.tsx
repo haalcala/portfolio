@@ -30,6 +30,8 @@ const createPluginNamespaceReducer = (pluginId, reducer) => {
 const action1s = {}
 const action2s = {}
 
+const registries = {}
+
 function App() {
 
   const store = useStore()
@@ -45,7 +47,7 @@ function App() {
   console.log("state", state)
   console.log("counter", counter)
 
-  const [registries, setRegistries] = useState<{ string: Registry } | {}>({})
+  const [_registries, setRegistries] = useState<{ string: Registry } | {}>({})
 
   // const [action1s, setAction1s] = useState({})
   // const [action2s, setAction2s] = useState({})
@@ -58,6 +60,7 @@ function App() {
     reducer = null
 
     constructor(public plugin: any) {
+
     }
 
     registerAction1(elem: any) {
@@ -104,11 +107,15 @@ function App() {
 
     // @ts-ignore
     window.registerPlugin = (plugin) => {
+      console.log("1111 registries", registries)
+
       if (registries[plugin.id]) {
         return
       }
 
       const registry = new Registry(plugin)
+
+      registries[plugin.id] = registry
 
       console.log('registering plugin ... plugin.id:', plugin.id, ', plugin.version:', plugin.version, ', plugin.name:', plugin.name, ', plugin:', plugin, ', registry:', registry)
       console.log("plugin", plugin)
@@ -117,24 +124,12 @@ function App() {
       console.log("plugin.setup", plugin.setup)
 
       setRegistries(
-        { ...registries, [registry.plugin.id]: registry }
+        { ...registries }
       )
 
-      console.log("registries", registries)
+      console.log("2222 registries", registries)
 
       plugin.setup(registry, store)
-
-      // setPlugin(plugin)
-
-      // plugin.setup(new Registry(), state, () => {console.log("Plugin click!!!"); setState({...state, count: state.count + 1})})
-
-      // const actions = document.getElementById('actions')
-
-      // console.log("actions", actions)
-
-      // if (actions) {
-      //   actions.appendChild(elem)
-      // }
     }
     return () => {
 
@@ -145,23 +140,9 @@ function App() {
 
   console.log("plugin_states", plugin_states)
 
-  // useEffect(() => {
-  //   console.log("registries", registries)
-  //   if (Object.keys(registries).length > 0) {
-  //     for (const Plugin_ID of Object.keys(registries)) {
-  //       const registry = registries[Plugin_ID]
-  //       console.log("Initialising registry", registry)
-  //       // if (!registry.initialised) {
-  //       // @ts-ignore
-  //       registry.plugin.setup(registry, store)
-  //       // }
-  //     }
-  //   }
-  // }, [registries])
-
-
   function onLoad(err: any) {
-    console.log('plugin loaded, err:', err)
+    // @ts-ignore
+    console.log('plugin loaded, err:', err, "this.id:", this.id)
 
   }
 
@@ -170,56 +151,66 @@ function App() {
   }
 
 
-  function loadPlugin() {
+  function loadPlugin(plugin_id) {
     console.log('loading plugin')
+
+    {const script = document.getElementById(plugin_id);
+    if (script) {
+      return
+    }}
+    
     const script = document.createElement('script');
     // script.id = 'plugin_' + manifest.id;
-    script.id = 'plugin1';
+    script.id = `${plugin_id}`
     script.type = 'text/javascript';
     // script.src = getSiteURL() + bundlePath;
     // script.src = "/static/plugins/plugin1/index.js";
-    script.src = "/static/plugins/plugin1/main.js";
+    script.src = `/static/plugins/${plugin_id}/main.js`;
     script.onload = onLoad;
     script.onerror = onError;
 
     const link = document.createElement('link');
 
-    link.id = 'plugin1_link';
+    link.id = `${plugin_id}_link`;
     link.rel = 'stylesheet';
-    link.href = "/static/plugins/plugin1/index.css";
+    link.href = `/static/plugins/${plugin_id}/index.css`
 
-    document.getElementsByTagName('head')[0].appendChild(script);
     document.getElementsByTagName('head')[0].appendChild(link);
+    document.getElementsByTagName('head')[0].appendChild(script);
   }
 
-  function unloadPlugin() {
+  function unloadPlugin(Plugin_ID) {
+    console.log('unloading plugin')
+
+    const registry = registries[Plugin_ID]
+    console.log("Unloading registry", registry)
+
+    const script = document.getElementById(Plugin_ID);
+    if (script) {
+      script.remove();
+    }
+    const link = document.getElementById(`${Plugin_ID}_link`);
+    if (link) {
+      link.remove();
+    }
+
+    delete registries[Plugin_ID]
+
+    setRegistries({...registries})
+
+    // setAction1s({})
+    // setAction2s({})
+    delete action1s[Plugin_ID]
+    delete action2s[Plugin_ID]
+  }
+
+  function unloadAllPlugins() {
     console.log('unloading plugin')
 
     if (Object.keys(registries).length > 0) {
       for (const Plugin_ID of Object.keys(registries)) {
-        const registry = registries[Plugin_ID]
-        console.log("Unloading registry", registry)
-
-        const script = document.getElementById('plugin1');
-        if (script) {
-          script.remove();
-        }
-        const link = document.getElementById('plugin1_link');
-        if (link) {
-          link.remove();
-        }
+        unloadPlugin(Plugin_ID)
       }
-    }
-
-    setRegistries({})
-
-    // setAction1s({})
-    // setAction2s({})
-    for (const Plugin_ID of Object.keys(action1s)) {
-      delete action1s[Plugin_ID]
-    }
-    for (const Plugin_ID of Object.keys(action2s)) {
-      delete action2s[Plugin_ID]
     }
   }
 
@@ -231,8 +222,8 @@ function App() {
 
         this is the main app
       </div>
-      <button onClick={loadPlugin}>Load plugin</button>
-      <button onClick={unloadPlugin}>Unload plugin</button>
+      <button onClick={() => loadPlugin("this_is_my_plugin_id_2")}>Load plugin</button>
+      <button onClick={() => unloadPlugin("this_is_my_plugin_id_2")}>Unload plugin</button>
 
       // button to increase count
       <button onClick={() => { console.log("----------------------------------------------------"); increment() }}>count is: {counter.value}</button>
