@@ -7,7 +7,7 @@ import { combineReducers } from 'redux';
 
 import { baseReducer } from './redux/reducers';
 
-import { action1AddReq,action1RemoveReq, action2AddReq,action2RemoveReq, action3AddReq} from './redux/actions';
+import { incrementReq, action1AddReq,action1RemoveReq, action2AddReq,action2RemoveReq, action3AddReq} from './redux/actions';
 
 const createPluginNamespaceReducer = (pluginId, reducer) => {
   return (state, action) => {
@@ -42,11 +42,7 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const increment = useCallback(() => dispatch({ type: 'counter/increment' }), [dispatch])
-
-  console.log("store", store)
-  console.log("state", state)
-  console.log("counter", counter)
+  const increment = useCallback(() => dispatch(incrementReq()), [dispatch])
 
   const [registries, setRegistries] = useState<{ string: Registry } | {}>({})
 
@@ -61,24 +57,18 @@ function App() {
 
     }
 
-    registerAction1(elem: any) {
-      console.log("registering element1", elem[0].props, typeof (elem))
-      
+    registerAction1(elem: any) {      
       dispatch(action1AddReq(this.plugin.id, elem))
     }
 
-    registerAction2(elem: any) {
-      console.log("registering element2", elem[0].props, typeof (elem))
-      
+    registerAction2(elem: any) {      
       dispatch(action2AddReq(this.plugin.id, elem))
     }
 
     registerReducer(reducer: any) {
       this.reducer = reducer
-      console.log("registering reducer", reducer)
 
       additionalReducers[this.plugin.id] = reducer
-      console.log("additionalReducers", additionalReducers)
 
       const createRootReducer = (additionalReducers = {}) => {
         return combineReducers({
@@ -90,8 +80,6 @@ function App() {
       };
 
       const new_reducers = createRootReducer(additionalReducers)
-
-      console.log("new_reducers", new_reducers)
 
       store.replaceReducer(
         // @ts-ignore
