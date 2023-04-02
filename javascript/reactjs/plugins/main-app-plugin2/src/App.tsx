@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { manifest } from './manifest';
 import { incrementReq } from './redux/actions';
-import { counterValue, pluginState } from './redux/selectors';
+import { counterValue, fromMain, pluginState } from './redux/selectors';
 
 const PLUGIN_ID = manifest.id
 
@@ -53,12 +53,16 @@ function App({ title, ...props }: any) {
   const [componentCounter, setComponentCounter] = useState(0)
 
   return (
-    <div className="App text-3xl font-bold underline">
+    <div className="text-3xl font-bold underline">
       {title}
       Plugin body <button className="button_action" onClick={increment}>Plugin button</button>
       {JSON.stringify(counter)}
       <button className="plugin_button" onClick={handleClick}>Click me (Plugin-wide) {JSON.stringify(count)}</button>
       <button className="this_custom_class" onClick={() => setComponentCounter(componentCounter + 1)}>Click me (Component-wide) {componentCounter}</button>
+      <div>
+        From main
+        <div>{fromMain(state)}</div>
+      </div>
     </div>
   );
 }

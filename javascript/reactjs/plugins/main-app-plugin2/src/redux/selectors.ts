@@ -10,3 +10,7 @@ export function counterValue(state) {
     // @ts-ignore
     return pluginState(state)?.counter?.value
 }
+
+export function fromMain(state) {
+    return state?.action3?.main_app
+}

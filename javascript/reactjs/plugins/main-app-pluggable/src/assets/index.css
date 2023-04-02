@@ -590,8 +590,21 @@ video {
   white-space: nowrap;
 }
 
+.rounded-md {
+  border-radius: 0.375rem;
+}
+
 .border {
   border-width: 1px;
+}
+
+.border-2 {
+  border-width: 2px;
+}
+
+.border-red-500 {
+  --tw-border-opacity: 1;
+  border-color: rgb(239 68 68 / var(--tw-border-opacity));
 }
 
 .bg-green-500 {
@@ -609,6 +622,11 @@ video {
 
 .italic {
   font-style: italic;
+}
+
+.text-cyan-500 {
+  --tw-text-opacity: 1;
+  color: rgb(6 182 212 / var(--tw-text-opacity));
 }
 
 .outline {
@@ -674,7 +692,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #383838;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -689,35 +707,4 @@ button:focus-visible {
 }
 
 #actions {
-  border: 1px solid red;
-}
-
-.\[\&\>\*\>\*\>\*\]\:text-cyan-500>*>*>* {
-  --tw-text-opacity: 1;
-  color: rgb(6 182 212 / var(--tw-text-opacity));
-}
-
-.\[\&\>\*\>\*\]\:text-cyan-500>*>* {
-  --tw-text-opacity: 1;
-  color: rgb(6 182 212 / var(--tw-text-opacity));
-}
-
-.\[\&\>\*\]\:text-blue-500>* {
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity));
-}
-
-.\[\&\>\*\]\:text-green-500>* {
-  --tw-text-opacity: 1;
-  color: rgb(34 197 94 / var(--tw-text-opacity));
-}
-
-.\[\&\>\*\]\:text-cyan-500>* {
-  --tw-text-opacity: 1;
-  color: rgb(6 182 212 / var(--tw-text-opacity));
-}
-
-.\[\&\>div\]\:text-cyan-500>div {
-  --tw-text-opacity: 1;
-  color: rgb(6 182 212 / var(--tw-text-opacity));
 }

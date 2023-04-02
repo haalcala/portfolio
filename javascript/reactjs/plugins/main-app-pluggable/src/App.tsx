@@ -7,6 +7,8 @@ import { combineReducers } from 'redux';
 
 import { baseReducer } from './redux/reducers';
 
+import { action1AddReq,action1RemoveReq, action2AddReq,action2RemoveReq, action3AddReq} from './redux/actions';
+
 const createPluginNamespaceReducer = (pluginId, reducer) => {
   return (state, action) => {
     // Initialize the state if it doesn't exist
@@ -27,9 +29,6 @@ const createPluginNamespaceReducer = (pluginId, reducer) => {
   };
 };
 
-// const action1s = {}
-// const action2s = {}
-
 // const registries = {}
 
 function App() {
@@ -38,6 +37,8 @@ function App() {
   const state = store.getState()
 
   const counter = useSelector((state: any) => state.counter)
+  const action1s = useSelector((state: any) => state.action1)
+  const action2s = useSelector((state: any) => state.action2)
 
   const dispatch = useDispatch()
 
@@ -48,9 +49,6 @@ function App() {
   console.log("counter", counter)
 
   const [registries, setRegistries] = useState<{ string: Registry } | {}>({})
-
-  const [action1s, setAction1s] = useState({})
-  const [action2s, setAction2s] = useState({})
 
   const additionalReducers = {}
 
@@ -65,14 +63,14 @@ function App() {
 
     registerAction1(elem: any) {
       console.log("registering element1", elem[0].props, typeof (elem))
-      action1s[this.plugin.id] = elem
-      setAction1s({ ...action1s })
+      
+      dispatch(action1AddReq(this.plugin.id, elem))
     }
 
     registerAction2(elem: any) {
       console.log("registering element2", elem[0].props, typeof (elem))
-      action2s[this.plugin.id] = elem
-      setAction2s({ ...action2s })
+      
+      dispatch(action2AddReq(this.plugin.id, elem))
     }
 
     registerReducer(reducer: any) {
@@ -201,10 +199,8 @@ function App() {
 
     setRegistries({ ...registries })
 
-    delete action1s[Plugin_ID]
-    delete action2s[Plugin_ID]
-    setAction1s({ ...action1s })
-    setAction2s({ ...action2s })
+    dispatch(action1RemoveReq(Plugin_ID))
+    dispatch(action2RemoveReq(Plugin_ID))
 
     console.log("document.getElementsByTagName('head')[0].children:", document.getElementsByTagName('head')[0].children)
   }
@@ -217,6 +213,10 @@ function App() {
         unloadPlugin(Plugin_ID)
       }
     }
+  }
+
+  function handleSetMainAction() {
+    dispatch(action3AddReq("main_app", <button onClick={increment}>this value is from the main app</button>))
   }
 
   console.log("action1s", action1s)
@@ -237,7 +237,7 @@ function App() {
         <div className=''>
           Action 1
         </div>
-        <div id="actions" className="flex flex-col bg-green-500 [&>*]:text-cyan-500">
+        <div id="actions" className="flex flex-col bg-green-500 text-cyan-500 border-2 border-red-500 rounded-md">
           {Object.values(action1s).map((action: any, actioni) => <div key={actioni}>{action}</div>)}asdadsa
           <div>
             sdflkajsf;akjdf;alskdfja;kdlfj
@@ -257,6 +257,7 @@ function App() {
       <div className="this_custom_class">
         Another main pluggable text
       </div>
+      <button onClick={handleSetMainAction}>Set Main Action</button>
     </div>
   )
 }
