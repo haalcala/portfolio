@@ -17,10 +17,11 @@ export default function UseWebsocket(client_id, onMessage) {
   useEffect(() => {
     let socket
 
-    if (!ws.current) {
+    if (ws.current) {
+      ws.current.disconnect();
+    }
+
     socket = io("http://" + window.location.host, { transports: ["websocket"] });
-  }
-  
     ws.current = socket;
 
     if (ws.current) {

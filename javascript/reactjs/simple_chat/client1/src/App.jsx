@@ -6,14 +6,16 @@ import { MyForm } from './components/MyForm';
 import { Events } from './components/Events';
 import UseWebsocket from './UseWebsocket';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendMessage } from './actions';
+import * as actions from './actions';
 
 export default function App() {
   const dispatch = useDispatch()
 
-  const {messages} = useSelector((state) => state.messages)
+  const { messages } = useSelector((state) => state.messages)
+  const websocket = useSelector((state) => state.websocket)
 
   console.log("messages: ", messages)
+  console.log("websocket: ", websocket)
 
   // const [isConnected, setIsConnected] = useState(socket.connected);
   // const [fooEvents, setFooEvents] = useState([]);
@@ -31,7 +33,7 @@ export default function App() {
 
   //   function onFooEvent(value) {
   //     console.log("onFooEvent(value)")
-      
+
   //     setFooEvents(previous => [...previous, value]);
   //   }
 
@@ -61,10 +63,12 @@ export default function App() {
   })
 
   return <div>
+    <button onClick={() => dispatch(actions.actionWebsocketConnect())}>Connect</button>
+
     <button onClick={() => ws.current.emit("findAllMessages")}>Send</button>
 
     <button onClick={() => ws.current.emit("send_lots")}>Send Lots</button>
-    <button onClick={() => dispatch(sendMessage("this is from client1 " + new Date().getTime()))}>Send</button>
+    <button onClick={() => dispatch(actions.sendMessage("this is from client1 " + new Date().getTime()))}>Send</button>
     {messages.map((message, index) => <div key={index}>{message}</div>)}
   </div>
 }
