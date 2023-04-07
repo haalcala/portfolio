@@ -65,9 +65,7 @@ export default function App() {
   // );
 
 
-  const ws = UseWebsocket("client123", (msg) => {
-    console.log("msg: ", msg)
-  })
+  const ws = UseWebsocket("client123")
 
   return <div>
     {websocket.connected && <button onClick={() => dispatch(ws_actions.actionWebsocketDisconnect())}>Disconnect</button>}

@@ -11,7 +11,7 @@ function cleanup_websocket(ws) {
   ws.off("pong");
 }
 
-export default function UseWebsocket(client_id, onMessage) {
+export default function UseWebsocket(client_id) {
   const [isConnected, setIsConnected] = useState(false);
   const [lastPong, setLastPong] = useState(null);
   const [consoleLog, setConsoleLog] = useState<{ timestamp: number }[]>([]);
@@ -69,12 +69,7 @@ export default function UseWebsocket(client_id, onMessage) {
       socket.on("send_lots_resp", (data) => {
         console.log("-----> websocket: data:", data);
 
-        if (onMessage) {
-          dispatch.current(app_actions.sendMessage(data))
-          // onMessage(["findAllMessages",data]);
-        }
-
-        // addToConsole(data);
+        dispatch.current(app_actions.sendMessage(data))
       });
 
     }

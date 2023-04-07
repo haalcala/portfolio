@@ -110,7 +110,10 @@ export const actions = {
 
 }
 
+
 const websocket = (state: { emit_messages: [], messages?, connected, next_state } = { emit_messages: [], connected: false, next_state: "", }, action) => {
+    console.log("--------------------------------- websocket state", state)
+
     switch (action.type) {
         case ACTION_WEBSOCKET_NEXT_STATE:
             return {
