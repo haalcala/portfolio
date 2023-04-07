@@ -86,6 +86,9 @@ export default function UseWebsocket(client_id, onMessage) {
         ws.current.connect();
       } else if (websocket.next_state === "disconnect") {
         ws.current.disconnect();
+        ws.current.off("connect");
+        ws.current.off("disconnect");
+        ws.current.off("pong");
         ws.current = null;
       }
     }
