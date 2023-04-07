@@ -1,4 +1,4 @@
-import { legacy_createStore } from "redux"
+import { legacy_createStore as createStore } from "redux"
 
 import { combineReducers } from "redux"
 
@@ -11,6 +11,6 @@ const base_reducers = {
     websocket,
 }
 
-const store = legacy_createStore(combineReducers(base_reducers))
+const store = createStore(combineReducers(base_reducers))
 
 export default store
