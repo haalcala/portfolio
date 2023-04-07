@@ -5,6 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { actions as ws_actions } from "./redux/websocket";
 import { actions as app_actions } from "./redux/app";
 
+function cleanup_websocket(ws) {
+  ws.off("connect");
+  ws.off("disconnect");
+  ws.off("pong");
+}
+
 export default function UseWebsocket(client_id, onMessage) {
   const [isConnected, setIsConnected] = useState(false);
   const [lastPong, setLastPong] = useState(null);
@@ -74,9 +80,10 @@ export default function UseWebsocket(client_id, onMessage) {
     }
 
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("pong");
+      if (ws.current) {
+        cleanup_websocket(ws.current);
+        ws.current = null;
+      }
     };
   }, [ws.current]);
 
@@ -86,9 +93,7 @@ export default function UseWebsocket(client_id, onMessage) {
         ws.current.connect();
       } else if (websocket.next_state === "disconnect") {
         ws.current.disconnect();
-        ws.current.off("connect");
-        ws.current.off("disconnect");
-        ws.current.off("pong");
+        cleanup_websocket(ws.current);
         ws.current = null;
       }
     }
