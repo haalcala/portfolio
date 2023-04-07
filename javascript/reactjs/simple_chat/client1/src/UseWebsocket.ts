@@ -1,8 +1,9 @@
 import io from "socket.io-client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { sendMessage } from "./actions";
+import { useDispatch, useSelector } from "react-redux";
+import { actions as ws_actions } from "./redux/websocket";
+import { actions as app_actions } from "./redux/app";
 
 export default function UseWebsocket(client_id, onMessage) {
   const [isConnected, setIsConnected] = useState(false);
@@ -11,17 +12,23 @@ export default function UseWebsocket(client_id, onMessage) {
 
   const dispatch = useRef(useDispatch())
 
+  // @ts-ignore
+  const websocket = useSelector((state) => state?.websocket); //
+
+  console.log("-----> websocket:", websocket);
 
   const ws = useRef<any>(null);
 
   useEffect(() => {
+    console.log("-----> websocket: useEffect:", websocket.next_state)
+
     let socket
 
     if (ws.current) {
       ws.current.disconnect();
     }
 
-    socket = io("http://" + window.location.host, { transports: ["websocket"] });
+    socket = io("http://" + window.location.host, { autoConnect: false, transports: ["websocket"] });
     ws.current = socket;
 
     if (ws.current) {
@@ -31,10 +38,14 @@ export default function UseWebsocket(client_id, onMessage) {
         console.log("-----> websocket: connect");
 
         socket.emit("client_id", client_id);
-        setIsConnected(true);
+        dispatch.current(ws_actions.actionWebsocketConnectSuccess());
       });
 
       socket.on("disconnect", () => {
+        console.log("-----> websocket: disconnect");
+
+        dispatch.current(ws_actions.actionWebsocketDisconnectSuccess());
+
         setIsConnected(false);
       });
 
@@ -46,19 +57,14 @@ export default function UseWebsocket(client_id, onMessage) {
       socket.on("findAllMessages", (data) => {
         console.log("-----> websocket: data:", data);
 
-        if (onMessage) {
-          dispatch.current(sendMessage(data))
-          // onMessage(["findAllMessages",data]);
-        }
-
-        // addToConsole(data);
+        dispatch.current(app_actions.sendMessage(data))
       });
 
       socket.on("send_lots_resp", (data) => {
         console.log("-----> websocket: data:", data);
 
         if (onMessage) {
-          dispatch.current(sendMessage(data))
+          dispatch.current(app_actions.sendMessage(data))
           // onMessage(["findAllMessages",data]);
         }
 
@@ -72,7 +78,31 @@ export default function UseWebsocket(client_id, onMessage) {
       socket.off("disconnect");
       socket.off("pong");
     };
-  }, []);
+  }, [ws.current]);
+
+  useEffect(() => {
+    if (ws.current) {
+      if (websocket.next_state === "connect") {
+        ws.current.connect();
+      } else if (websocket.next_state === "disconnect") {
+        ws.current.disconnect();
+        ws.current = null;
+      }
+    }
+  }, [websocket.next_state]);
+
+  useEffect(() => {
+    if (ws.current) {
+      if (websocket.emit_messages.length > 0) {
+        const message = websocket.emit_messages[0];
+        console.log("-----> websocket: emit:", message);
+
+        ws.current.emit(message);
+        // @ts-ignore
+        dispatch.current(ws_actions.actionWebsocketSendMessageSuccess());
+      }
+    }
+  }, [websocket.emit_messages]);
 
   const sendPing = () => {
     // client.send("ping")
