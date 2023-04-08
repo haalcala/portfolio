@@ -30,9 +30,9 @@ export default function UseWebsocket(client_id) {
 
     let socket
 
-    // if (ws.current) {
-    //   ws.current.disconnect();
-    // }
+    if (ws.current) {
+      ws.current.disconnect();
+    }
 
     socket = io("http://" + window.location.host, { autoConnect: false, transports: ["websocket"] });
     ws.current = socket;
@@ -69,7 +69,7 @@ export default function UseWebsocket(client_id) {
       socket.on("send_lots_resp", (data) => {
         console.log("-----> websocket: data:", data);
 
-        dispatch.current(app_actions.sendMessage(data))
+        dispatch.current(app_actions.setNewMessage({ sender: "server", msg: data, timestamp: new Date().toISOString() }))
       });
 
     }

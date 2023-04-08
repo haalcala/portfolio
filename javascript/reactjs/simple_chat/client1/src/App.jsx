@@ -137,18 +137,17 @@ export default function App() {
 
   function NewMessagesOverlay() {
     return (
-      <div className="new-messages-overlay">
+      <div className="new-messages-overlay ">
         <hr color="lightgray" className="my-1 h-[2px] w-[100%]" />
-        <div className="absolute z-10 top-[-10px] bg-white px-1">
+        <div className="absolute z-10 top-[-10px] bg-slate-400 px-2 rounded-md border-gray-100 border-solid">
           {new_messages.length} new {new_messages.length > 1 ? 'messages' : 'message'}
-
         </div>
       </div>
     );
   };
 
   function RenderMessage(message, index) {
-    return <div key={index} className={"p-5 w-[80%] rounded-md " + (message.sender == "server" ? "bg-blue-200" : "ml-auto text-right")}>
+    return <div key={index} className={"p-2 m-2 w-[80%] rounded-md " + (message.sender == "server" ? "bg-blue-200" : "ml-auto text-right")}>
       {JSON.stringify(message)}
     </div>
   }
@@ -161,8 +160,11 @@ export default function App() {
     <div className="chat-messages">
       <div onScroll={handleScroll}>
         {messages.map(RenderMessage)}
-        {new_messages.length > 0 && <NewMessagesOverlay />}
-        {new_messages.length > 0 && new_messages.map(RenderMessage)}
+        {
+          new_messages.length > 0 && <div className="bg-blue-100 py-1 rounded-md">
+            <NewMessagesOverlay />
+            {new_messages.length > 0 && new_messages.map(RenderMessage)}
+          </div>}
         <div ref={messagesEndRef} />
       </div>
 
