@@ -132,7 +132,7 @@ export default function App() {
   }, [new_messages])
 
 
-  const NewMessagesOverlay = () => {
+  function NewMessagesOverlay() {
     return (
       <div className="new-messages-overlay">
         <hr color="lightgray" className="my-1 h-[2px] w-[100%]" />
@@ -144,6 +144,12 @@ export default function App() {
     );
   };
 
+  function RenderMessage(message, index) {
+    return <div key={index} className={"p-5 w-[80%] rounded-md " + (message.sender == "server" ? "bg-blue-200" : "ml-auto text-right")}>
+      {JSON.stringify(message)}
+    </div>
+  }
+
 
   return <div className="chat-container">
     <div className="chat-header">
@@ -151,7 +157,7 @@ export default function App() {
     </div>
     <div className="chat-messages">
       <div onScroll={handleScroll}>
-        {messages.map((message, index) => <div key={index}>{JSON.stringify(message)}</div>)}
+        {messages.map((message, index) => RenderMessage(message, index))}
         {new_messages.length > 0 && <NewMessagesOverlay />}
         {new_messages.length > 0 && new_messages.map((message, index) => <div key={index}>{JSON.stringify(message)}</div>)}
         <div ref={messagesEndRef} />
