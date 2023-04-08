@@ -1,6 +1,8 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer,
+import {
+  WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer,
   OnGatewayConnection,
-  OnGatewayDisconnect, } from '@nestjs/websockets';
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
@@ -11,7 +13,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(private readonly messagesService: MessagesService) { }
 
   // @SubscribeMessage('createMessage')
   // create(@MessageBody() createMessageDto: CreateMessageDto) {
@@ -34,9 +36,9 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage('findAllMessages')
-  findAll() {
-    console.log("SubscribeMessage('findAllMessages')")
-    this.server.emit("findAllMessages","SubscribeMessage('findAllMessages') !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+  findAll(@MessageBody() msg: string) {
+    console.log("SubscribeMessage('findAllMessages') msg:", msg)
+    this.server.emit("findAllMessages", "SubscribeMessage('findAllMessages') !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + msg)
     // return this.messagesService.findAll();
   }
 
@@ -45,7 +47,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
     console.log("SubscribeMessage('send_lots')")
 
     for (let i = 0; i < 1000; i++) {
-      this.server.emit("send_lots_resp","SubscribeMessage('send_lots') " + i)
+      this.server.emit("send_lots_resp", "SubscribeMessage('send_lots') " + i)
     }
   }
 

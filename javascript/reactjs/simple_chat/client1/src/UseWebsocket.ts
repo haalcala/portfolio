@@ -30,9 +30,9 @@ export default function UseWebsocket(client_id) {
 
     let socket
 
-    if (ws.current) {
-      ws.current.disconnect();
-    }
+    // if (ws.current) {
+    //   ws.current.disconnect();
+    // }
 
     socket = io("http://" + window.location.host, { autoConnect: false, transports: ["websocket"] });
     ws.current = socket;
@@ -63,7 +63,7 @@ export default function UseWebsocket(client_id) {
       socket.on("findAllMessages", (data) => {
         console.log("-----> websocket: data:", data);
 
-        dispatch.current(app_actions.sendMessage(data))
+        dispatch.current(app_actions.setNewMessage({ sender: "server", msg: data, timestamp: new Date().toISOString() }))
       });
 
       socket.on("send_lots_resp", (data) => {
@@ -100,7 +100,13 @@ export default function UseWebsocket(client_id) {
         const message = websocket.emit_messages[0];
         console.log("-----> websocket: emit:", message);
 
-        ws.current.emit(message);
+        if (message === "send_lots") {
+          ws.current.emit("send_lots", message);
+        } else {
+          ws.current.emit("findAllMessages", message);
+        }
+
+
         // @ts-ignore
         dispatch.current(ws_actions.actionWebsocketSendMessageSuccess());
       }
