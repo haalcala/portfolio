@@ -2,16 +2,22 @@ import {
   WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { Server } from 'socket.io';
+import { Socket } from 'net';
 
-@WebSocketGateway()
+type Client = Socket & { client_id: string }
+
+@WebSocketGateway({ namespace: 'simple_chat' })
 export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server: Server
+
+  static clients = {}
 
   constructor(private readonly messagesService: MessagesService) { }
 
@@ -26,19 +32,32 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
     console.log("handleConnection args:", args)
   }
 
-  handleDisconnect(client: any) {
+  handleDisconnect(@ConnectedSocket() client: Client) {
     console.log("handleDisconnect client:")
+
+    delete MessagesGateway.clients[client.client_id]
+
+    console.log("SubscribeMessage('client_id') MessagesGateway.clients:", MessagesGateway.clients)
   }
 
   @SubscribeMessage('client_id')
-  create(@MessageBody() client_id: string) {
+  create(@ConnectedSocket() client: Client, @MessageBody() client_id: string) {
     console.log("SubscribeMessage('client_id') client_id:", client_id)
+
+    client.client_id = client_id
+
+    MessagesGateway.clients[client_id] = client
+
+    console.log("SubscribeMessage('client_id') MessagesGateway.clients:", MessagesGateway.clients)
   }
 
   @SubscribeMessage('findAllMessages')
-  findAll(@MessageBody() msg: string) {
+  findAll(@ConnectedSocket() client: Socket, @MessageBody() msg: string) {
     console.log("SubscribeMessage('findAllMessages') msg:", msg)
-    this.server.emit("findAllMessages", "SubscribeMessage('findAllMessages') !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + msg)
+    console.log("SubscribeMessage('findAllMessages') this.server:", this.server)
+
+    client.emit("findAllMessages", "SubscribeMessage('findAllMessages') !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + msg)
+    // this.server.emit("findAllMessages", "SubscribeMessage('findAllMessages') !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + msg)
     // return this.messagesService.findAll();
   }
 

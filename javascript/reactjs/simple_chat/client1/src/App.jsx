@@ -9,7 +9,7 @@ import UseAPI from './UseAPI';
 export default function App() {
 
 
-  UseWebsocket("client123")
+  UseWebsocket("client123-" + new Date().getTime())
 
   const api = UseAPI()
 

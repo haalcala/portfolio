@@ -34,7 +34,7 @@ export default function UseWebsocket(client_id) {
       ws.current.disconnect();
     }
 
-    socket = io("http://" + window.location.host, { autoConnect: false, transports: ["websocket"] });
+    socket = io("http://" + window.location.host + "/simple_chat", { autoConnect: false, transports: ["websocket"] });
     ws.current = socket;
 
     if (ws.current) {
