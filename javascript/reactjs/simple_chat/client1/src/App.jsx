@@ -39,7 +39,10 @@ export default function App() {
     setMessage("")
     dispatch(ws_actions.actionWebsocketSendMessage(message))
     dispatch(app_actions.setNewMessage({ sender: "me", msg: message, timestamp: new Date().getTime() }))
+    inputRef.current.focus()
   }
+
+  const inputRef = useRef(null);
 
   // const [isConnected, setIsConnected] = useState(socket.connected);
   // const [fooEvents, setFooEvents] = useState([]);
@@ -152,24 +155,23 @@ export default function App() {
 
 
   return <div className="chat-container">
-    <div className="chat-header">
+    <div className={"chat-header " + (websocket.connected ? "bg-[#4caf50]" : "bg-gray-400")}>
       <h2>Chat App</h2>
     </div>
     <div className="chat-messages">
       <div onScroll={handleScroll}>
-        {messages.map((message, index) => RenderMessage(message, index))}
+        {messages.map(RenderMessage)}
         {new_messages.length > 0 && <NewMessagesOverlay />}
-        {new_messages.length > 0 && new_messages.map((message, index) => <div key={index}>{JSON.stringify(message)}</div>)}
+        {new_messages.length > 0 && new_messages.map(RenderMessage)}
         <div ref={messagesEndRef} />
       </div>
 
     </div>
     <div className="chat-input">
-      <input id="message" className="w-[100%]" type="text" value={message} onChange={handleOnChange} placeholder="Type your message..." />
+      <input id="message" ref={inputRef} className="w-[100%]" type="text" value={message} onChange={handleOnChange} placeholder="Type your message..." />
       <button onClick={handleOnClick}>Send</button>
       {websocket.connected && <button onClick={() => dispatch(ws_actions.actionWebsocketDisconnect())}>Disconnect</button>}
       {!websocket.connected && <button onClick={() => dispatch(ws_actions.actionWebsocketConnect())}>Connect</button>}
-
     </div>
   </div>
 }
