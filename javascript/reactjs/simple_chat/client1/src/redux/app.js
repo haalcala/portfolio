@@ -75,7 +75,7 @@ export function UseSelector() {
     },
     getSupportMsg: () => {
       return useSelector(state => state.app.support_msg)
-    }
+    },
   }
 }
 

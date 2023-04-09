@@ -25,6 +25,9 @@ const ACTION_WEBSOCKET_RECEIVE_MESSAGE_SUCCESS = 'ACTION_WEBSOCKET_RECEIVE_MESSA
 
 const ACTION_WEBSOCKET_RECEIVE_MESSAGE_ERROR = 'ACTION_WEBSOCKET_RECEIVE_MESSAGE_ERROR'
 
+export const selector = {
+    isConnected: state => state.websocket.connected,
+}
 
 export const actions = {
     actionWebsocketConnect() {
@@ -110,8 +113,15 @@ export const actions = {
 
 }
 
+const initialState = {
+    emit_messages: [],
+    connected: false,
+    next_state: "",
+    messages: [],
+}
 
-const websocket = (state: { emit_messages: [], messages?, connected, next_state } = { emit_messages: [], connected: false, next_state: "", }, action) => {
+
+const websocket = (state = initialState, action) => {
     console.log("--------------------------------- websocket state", state)
 
     switch (action.type) {

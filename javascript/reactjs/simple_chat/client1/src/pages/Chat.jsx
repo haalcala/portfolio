@@ -43,8 +43,9 @@ export default function Chat() {
 
   function handleOnClick() {
     setMessage("")
-    dispatch(ws_actions.actionWebsocketSendMessage(message))
-    dispatch(app_actions.setNewMessage({ sender: "me", msg: message, timestamp: new Date().getTime() }))
+
+    api.sendMessage(message)
+
     inputRef.current.focus()
   }
 
