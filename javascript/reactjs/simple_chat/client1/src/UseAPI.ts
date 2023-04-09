@@ -11,6 +11,16 @@ export default function UseAPI() {
     const api = {
         async sendMessage(message) {
             dispatch(ws_actions.actionWebsocketSendMessage(message))
+        },
+
+        async login(username, password) {
+            setTimeout(() => {
+                dispatch(app_actions.setLoginStatus("success", { id: username, name: username }))
+            }, 1000)
+        },
+
+        setSupportMessage(msg) {
+            dispatch(app_actions.setSupportMessage(msg))
         }
     }
 

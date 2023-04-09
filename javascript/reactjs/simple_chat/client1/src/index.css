@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+#root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
@@ -18,10 +18,12 @@
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    min-width: 320px;
+    max-width: 1024px;
+
+    width: 100%;
+
+    /* margin: 0 auto; */
 }
 
 a {
@@ -36,16 +38,16 @@ a:hover {
 
 body {
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: stretch;
     /* place-items: center; */
-    /* min-width: 320px; */
     min-height: 100vh;
     color: #272525;
-
     width: 100vw;
-    max-width: 1024px;
+
+    display: flex;
+    justify-content: center;
+
+    /* border: 1px solid red; */
+
 }
 
 h1 {
@@ -53,22 +55,33 @@ h1 {
     line-height: 1.1;
 }
 
+h2 {
+    font-size: 2.4em;
+    line-height: 1.1;
+}
+
+h3 {
+    font-size: 1.8em;
+    line-height: 1.1;
+}
+
 button {
     border-radius: 8px;
-    border: 1px solid transparent;
+    border: 1px solid gray;
     padding: .6em;
     margin: .2em;
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #1a1a1a;
+    background-color: #545252;
     cursor: pointer;
     transition: border-color 0.25s;
-    color: rgb(194, 188, 188)
+    color: rgb(45, 44, 44)
 }
 
 button:hover {
     border-color: #646cff;
+    background-color: #a7acff;
 }
 
 button:focus,
@@ -114,11 +127,6 @@ button:focus-visible {
 .chat-container {
     display: flex;
     flex-direction: column;
-    /* height: 100%; */
-    /* width: 100%; */
-    /* position: relative; */
-    /* min-width: 640px; */
-
 }
 
 .chat-header {
@@ -140,7 +148,7 @@ button:focus-visible {
     overflow-y: auto;
     margin-bottom: 10px;
     /* border: 1px solid red; */
-    height: calc(100vh - 150px);
+    height: calc(100vh - 170px);
     overflow-x: hidden;
 }
 
@@ -186,10 +194,89 @@ button:focus-visible {
     /* border: 1px solid green; */
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    height: 100vh;
+}
+
+.login-container>div {
+    margin: auto;
+    flex-direction: column;
+    /* width: 500px; */
+}
+
+.login-container div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.login-container label {
+    display: inline-block;
+    font-weight: bold;
+    width: 100px;
+}
+
+.login-container input {
+    width: 200px;
+
+}
+
+.login-container button {
+    width: 200px;
+
+}
+
+.login-container div:last-child {
+    /* margin: auto; */
+    /* justify-content: center; */
+    /* border: 1px solid rebeccapurple; */
+}
+
+input[type="text"],
+input[type="password"] {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: #96adc8;
+}
+
+/* .login_box {
+    margin: auto;
+
+    max-width: 640px;
+
+} */
+
+.support-container {
+    display: flex;
+    flex-direction: row;
+
+    /* overflow-x: hidden; */
+
+}
+
+.support-container>div {
+    width: 100%;
+    padding: 0 10px;
+}
+
+.support-container .chat-container {
+    /* height: calc(100vh - 100px); */
+}
+
+
+@media (prefers-color-scheme: light) {
+    #root {
         /* color: #213547; */
         background-color: #ffffff;
+
+        border: 1px solid blueviolet;
     }
 
     a:hover {
