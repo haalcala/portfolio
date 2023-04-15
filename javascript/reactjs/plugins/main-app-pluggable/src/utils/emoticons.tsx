@@ -1,6 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-import {Emoji} from 'mattermost-redux/types/emojis';
+import {Emoji} from 'plugin-server-webapp-utils/types/emojis';
 
 export const emoticonPatterns: { [key: string]: RegExp } = {
     slightly_smiling_face: /(^|\B)(:-?\))($|\B)/g, // :)

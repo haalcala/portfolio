@@ -2,27 +2,27 @@ import {IntlShape} from 'react-intl';
 
 import {createSelector} from 'reselect';
 
-import {Client4} from 'mattermost-redux/client';
+import {Client4} from 'plugin-server-webapp-utils/client';
 
-import {Permissions, Posts} from 'mattermost-redux/constants';
+import {Permissions, Posts} from 'plugin-server-webapp-utils/constants';
 
-import {getChannel} from 'mattermost-redux/selectors/entities/channels';
-import {makeGetReactionsForPost} from 'mattermost-redux/selectors/entities/posts';
-import {get, isCollapsedThreadsEnabled} from 'mattermost-redux/selectors/entities/preferences';
-import {haveIChannelPermission} from 'mattermost-redux/selectors/entities/roles';
-import {getCurrentTeamId, getTeam} from 'mattermost-redux/selectors/entities/teams';
-import {makeGetDisplayName, getCurrentUserId, getUser, UserMentionKey} from 'mattermost-redux/selectors/entities/users';
+import {getChannel} from 'plugin-server-webapp-utils/selectors/entities/channels';
+import {makeGetReactionsForPost} from 'plugin-server-webapp-utils/selectors/entities/posts';
+import {get, isCollapsedThreadsEnabled} from 'plugin-server-webapp-utils/selectors/entities/preferences';
+import {haveIChannelPermission} from 'plugin-server-webapp-utils/selectors/entities/roles';
+import {getCurrentTeamId, getTeam} from 'plugin-server-webapp-utils/selectors/entities/teams';
+import {makeGetDisplayName, getCurrentUserId, getUser, UserMentionKey} from 'plugin-server-webapp-utils/selectors/entities/users';
 
-import {Channel} from 'mattermost-redux/types/channels';
-import {ClientConfig, ClientLicense} from 'mattermost-redux/types/config';
-import {ServerError} from 'mattermost-redux/types/errors';
-import {Group} from 'mattermost-redux/types/groups';
-import {Post} from 'mattermost-redux/types/posts';
-import {Reaction} from 'mattermost-redux/types/reactions';
+import {Channel} from 'plugin-server-webapp-utils/types/channels';
+import {ClientConfig, ClientLicense} from 'plugin-server-webapp-utils/types/config';
+import {ServerError} from 'plugin-server-webapp-utils/types/errors';
+import {Group} from 'plugin-server-webapp-utils/types/groups';
+import {Post} from 'plugin-server-webapp-utils/types/posts';
+import {Reaction} from 'plugin-server-webapp-utils/types/reactions';
 
-import {getUserIdFromChannelName} from 'mattermost-redux/utils/channel_utils';
-import * as PostListUtils from 'mattermost-redux/utils/post_list';
-import {canEditPost as canEditPostRedux} from 'mattermost-redux/utils/post_utils';
+import {getUserIdFromChannelName} from 'plugin-server-webapp-utils/utils/channel_utils';
+import * as PostListUtils from 'plugin-server-webapp-utils/utils/post_list';
+import {canEditPost as canEditPostRedux} from 'plugin-server-webapp-utils/utils/post_utils';
 
 import {getEmojiMap} from 'selectors/emojis';
 import {getIsMobileView} from 'selectors/views/browser';
@@ -325,7 +325,7 @@ export function isIdNotPost(postId: string): boolean {
 }
 
 // getOldestPostId returns the oldest valid post ID in the given list of post IDs. This function is copied from
-// mattermost-redux, except it also includes additional special IDs that are only used in the web app.
+// plugin-server-webapp-utils, except it also includes additional special IDs that are only used in the web app.
 export function getOldestPostId(postIds: string[]): string {
     for (let i = postIds.length - 1; i >= 0; i--) {
         const item = postIds[i];
@@ -373,7 +373,7 @@ export function getPreviousPostId(postIds: string[], startIndex: number): string
 }
 
 // getLatestPostId returns the most recent valid post ID in the given list of post IDs. This function is copied from
-// mattermost-redux, except it also includes additional special IDs that are only used in the web app.
+// plugin-server-webapp-utils, except it also includes additional special IDs that are only used in the web app.
 export function getLatestPostId(postIds: string[]): string {
     for (let i = 0; i < postIds.length; i++) {
         const item = postIds[i];

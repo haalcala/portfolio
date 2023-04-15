@@ -1,4 +1,4 @@
-import {CloudCustomer} from 'mattermost-redux/types/cloud';
+import {CloudCustomer} from 'plugin-server-webapp-utils/types/cloud';
 
 export function isCustomerCardExpired(customer?: CloudCustomer): boolean {
     if (!customer) {

@@ -1,7 +1,7 @@
 import emojiRegex from 'emoji-regex';
 import React from 'react';
 
-import {Emoji} from 'mattermost-redux/types/emojis';
+import {Emoji} from 'plugin-server-webapp-utils/types/emojis';
 
 const defaultRule = (aName: string, bName: string, emojiA: Emoji, emojiB: Emoji) => {
     if (emojiA.category === 'custom' && emojiB.category !== 'custom') {

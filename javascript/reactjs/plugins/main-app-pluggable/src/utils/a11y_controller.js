@@ -6,6 +6,7 @@ const listenerOptions = {
     capture: true,
 };
 
+
 export default class A11yController {
     constructor() {
         this.regionHTMLCollection = this.getAllRegions();

@@ -1,4 +1,4 @@
-import {Permissions} from 'mattermost-redux/constants/index';
+import {Permissions} from 'plugin-server-webapp-utils/constants/index';
 
 import {rolesFromMapping, mappingValueFromRoles} from 'utils/policy_roles_adapter';
 

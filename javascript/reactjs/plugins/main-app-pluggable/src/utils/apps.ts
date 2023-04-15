@@ -1,5 +1,5 @@
-import {AppCallResponseTypes} from 'mattermost-redux/constants/apps';
-import {AppCall, AppCallRequest, AppCallValues, AppContext, AppExpand, AppSelectOption} from 'mattermost-redux/types/apps';
+import {AppCallResponseTypes} from 'plugin-server-webapp-utils/constants/apps';
+import {AppCall, AppCallRequest, AppCallValues, AppContext, AppExpand, AppSelectOption} from 'plugin-server-webapp-utils/types/apps';
 
 export const appsPluginID = 'com.mattermost.apps';
 

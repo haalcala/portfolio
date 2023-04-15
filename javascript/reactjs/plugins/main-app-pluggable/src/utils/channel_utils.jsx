@@ -1,10 +1,10 @@
-import {haveIChannelPermission} from 'mattermost-redux/selectors/entities/roles';
-import Permissions from 'mattermost-redux/constants/permissions';
+import {haveIChannelPermission} from 'plugin-server-webapp-utils/selectors/entities/roles';
+import Permissions from 'plugin-server-webapp-utils/constants/permissions';
 
-import {removeUserFromTeam} from 'mattermost-redux/actions/teams';
-import {TeamTypes} from 'mattermost-redux/action_types';
-import {getRedirectChannelNameForTeam} from 'mattermost-redux/selectors/entities/channels';
-import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
+import {removeUserFromTeam} from 'plugin-server-webapp-utils/actions/teams';
+import {TeamTypes} from 'plugin-server-webapp-utils/action_types';
+import {getRedirectChannelNameForTeam} from 'plugin-server-webapp-utils/selectors/entities/channels';
+import {getCurrentUserId} from 'plugin-server-webapp-utils/selectors/entities/users';
 
 import {openModal} from 'actions/views/modals';
 
