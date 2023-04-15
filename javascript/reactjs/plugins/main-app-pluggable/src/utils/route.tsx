@@ -1,10 +1,10 @@
 import {ErrorPageTypes} from 'utils/constants';
 
-import {UserProfile} from 'mattermost-redux/types/users';
+import {UserProfile} from 'plugin-server-webapp-utils/types/users';
 
-import {ClientLicense} from 'mattermost-redux/types/config';
+import {ClientLicense} from 'plugin-server-webapp-utils/types/config';
 
-import {isGuest} from 'mattermost-redux/utils/user_utils';
+import {isGuest} from 'plugin-server-webapp-utils/utils/user_utils';
 
 export const notFoundParams = {
     type: ErrorPageTypes.PAGE_NOT_FOUND,

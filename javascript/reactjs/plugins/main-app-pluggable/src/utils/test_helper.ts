@@ -1,17 +1,17 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-import {Channel, ChannelMembership, ChannelNotifyProps, ChannelWithTeamData} from 'mattermost-redux/types/channels';
-import {Bot} from 'mattermost-redux/types/bots';
-import {Role} from 'mattermost-redux/types/roles';
-import {UserProfile, UserAccessToken} from 'mattermost-redux/types/users';
-import {Team, TeamMembership} from 'mattermost-redux/types/teams';
-import {Group} from 'mattermost-redux/types/groups';
-import {FileInfo} from 'mattermost-redux/types/files';
-import {Post} from 'mattermost-redux/types/posts';
-import {CategorySorting, ChannelCategory} from 'mattermost-redux/types/channel_categories';
-import {Command, IncomingWebhook} from 'mattermost-redux/types/integrations';
-import {CategoryTypes} from 'mattermost-redux/constants/channel_categories';
-import {Session} from 'mattermost-redux/types/sessions';
+import {Channel, ChannelMembership, ChannelNotifyProps, ChannelWithTeamData} from 'plugin-server-webapp-utils/types/channels';
+import {Bot} from 'plugin-server-webapp-utils/types/bots';
+import {Role} from 'plugin-server-webapp-utils/types/roles';
+import {UserProfile, UserAccessToken} from 'plugin-server-webapp-utils/types/users';
+import {Team, TeamMembership} from 'plugin-server-webapp-utils/types/teams';
+import {Group} from 'plugin-server-webapp-utils/types/groups';
+import {FileInfo} from 'plugin-server-webapp-utils/types/files';
+import {Post} from 'plugin-server-webapp-utils/types/posts';
+import {CategorySorting, ChannelCategory} from 'plugin-server-webapp-utils/types/channel_categories';
+import {Command, IncomingWebhook} from 'plugin-server-webapp-utils/types/integrations';
+import {CategoryTypes} from 'plugin-server-webapp-utils/constants/channel_categories';
+import {Session} from 'plugin-server-webapp-utils/types/sessions';
 import {ProductComponent} from 'types/store/plugins';
 
 export class TestHelper {

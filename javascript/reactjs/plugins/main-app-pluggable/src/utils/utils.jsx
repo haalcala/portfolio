@@ -14,23 +14,23 @@ import {
     getChannelByNameAndTeamName,
     getChannelMember,
     joinChannel,
-} from 'mattermost-redux/actions/channels';
-import {getPost as getPostAction} from 'mattermost-redux/actions/posts';
-import {getTeamByName as getTeamByNameAction} from 'mattermost-redux/actions/teams';
-import {Client4} from 'mattermost-redux/client';
-import {Posts, Preferences} from 'mattermost-redux/constants';
+} from 'plugin-server-webapp-utils/actions/channels';
+import {getPost as getPostAction} from 'plugin-server-webapp-utils/actions/posts';
+import {getTeamByName as getTeamByNameAction} from 'plugin-server-webapp-utils/actions/teams';
+import {Client4} from 'plugin-server-webapp-utils/client';
+import {Posts, Preferences} from 'plugin-server-webapp-utils/constants';
 import {
     getChannel,
     getChannelsNameMapInTeam,
     getMyChannelMemberships,
     getRedirectChannelNameForTeam,
-} from 'mattermost-redux/selectors/entities/channels';
-import {getConfig} from 'mattermost-redux/selectors/entities/general';
-import {getPost} from 'mattermost-redux/selectors/entities/posts';
-import {getBool, getTeammateNameDisplaySetting} from 'mattermost-redux/selectors/entities/preferences';
-import {getCurrentUser, getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
-import {blendColors, changeOpacity} from 'mattermost-redux/utils/theme_utils';
-import {displayUsername, isSystemAdmin} from 'mattermost-redux/utils/user_utils';
+} from 'plugin-server-webapp-utils/selectors/entities/channels';
+import {getConfig} from 'plugin-server-webapp-utils/selectors/entities/general';
+import {getPost} from 'plugin-server-webapp-utils/selectors/entities/posts';
+import {getBool, getTeammateNameDisplaySetting} from 'plugin-server-webapp-utils/selectors/entities/preferences';
+import {getCurrentUser, getCurrentUserId} from 'plugin-server-webapp-utils/selectors/entities/users';
+import {blendColors, changeOpacity} from 'plugin-server-webapp-utils/utils/theme_utils';
+import {displayUsername, isSystemAdmin} from 'plugin-server-webapp-utils/utils/user_utils';
 import {
     getCurrentRelativeTeamUrl,
     getCurrentTeam,
@@ -38,7 +38,7 @@ import {
     getTeam,
     getTeamByName,
     getTeamMemberships,
-} from 'mattermost-redux/selectors/entities/teams';
+} from 'plugin-server-webapp-utils/selectors/entities/teams';
 
 import {addUserToTeam} from 'actions/team_actions';
 import {searchForTerm} from 'actions/post_actions';

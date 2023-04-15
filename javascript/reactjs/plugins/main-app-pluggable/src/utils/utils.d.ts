@@ -1,10 +1,10 @@
 import React from 'react';
 
-import {Channel} from 'mattermost-redux/types/channels';
-import {ClientConfig} from 'mattermost-redux/types/config';
-import {Team} from 'mattermost-redux/types/teams';
-import {Theme} from 'mattermost-redux/types/themes';
-import {UserProfile, UserStatus} from 'mattermost-redux/types/users';
+import {Channel} from 'plugin-server-webapp-utils/types/channels';
+import {ClientConfig} from 'plugin-server-webapp-utils/types/config';
+import {Team} from 'plugin-server-webapp-utils/types/teams';
+import {Theme} from 'plugin-server-webapp-utils/types/themes';
+import {UserProfile, UserStatus} from 'plugin-server-webapp-utils/types/users';
 
 import {GlobalState} from 'types/store';
 

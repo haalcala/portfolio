@@ -1,6 +1,6 @@
 import marked from 'marked';
 
-import {getConfig} from 'mattermost-redux/selectors/entities/general';
+import {getConfig} from 'plugin-server-webapp-utils/selectors/entities/general';
 
 import store from 'stores/redux_store.jsx';
 

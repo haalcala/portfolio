@@ -1,4 +1,4 @@
-import {General} from 'mattermost-redux/constants';
+import {General} from 'plugin-server-webapp-utils/constants';
 
 import * as TeamUtils from 'utils/team_utils.jsx';
 

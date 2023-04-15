@@ -1,4 +1,4 @@
-import {GeneralTypes} from 'mattermost-redux/action_types';
+import {GeneralTypes} from 'plugin-server-webapp-utils/action_types';
 
 import store from 'stores/redux_store.jsx';
 
