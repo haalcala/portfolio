@@ -1,0 +1,9 @@
+{
+    "key": "ctrl+m ctrl+1",
+    "command": "editor.action.insertSnippet",
+    "when": "editorTextFocus && editorLangId == markdown",
+    "args": {
+        "langId": "markdown",
+        "name": "Insert heading level 1"
+    }
+}

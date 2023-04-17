@@ -1,0 +1,49 @@
+{
+    "Basic HTML Table": {
+        "prefix": "!haa:bhtmltable",
+        "body": [
+            "<html>",
+            "</html>"
+        ],
+        "description": "Basic HTML Table"
+    },
+    "Insert heading level 1": {
+        "prefix": "!haa:heading1",
+        "body": [
+            "<h1>${1:${TM_SELECTED_TEXT}}$0</h1>"
+        ],
+        "description": "Insert heading level 1"
+    },
+    "For Loop": {
+        "prefix": "!haa:for",
+        "body": [
+            "for (let ${1:index} = 0; ${1:index} < ${2:array}.length; ${1:index}++) {",
+            "\tconst ${3:element} = ${2:array}[${1:index}];",
+            "\t$0",
+            "}"
+        ]
+    },
+    "Insert task list": {
+        "prefix": "!haa:task",
+        "body": [
+            "- [${1| ,x|}] ${2:text}",
+            "${0}"
+        ]
+    },
+    "Insert block comment with date": {
+        "prefix": "!haa:date comment",
+        "body": [
+            "${BLOCK_COMMENT_START}",
+            "${CURRENT_YEAR}/${CURRENT_MONTH}/${CURRENT_DATE} ${CURRENT_HOUR}:${CURRENT_MINUTE}:${CURRENT_SECOND} Edited by ${1:harold}",
+            "${BLOCK_COMMENT_END}"
+        ],
+        "description": "Find more information https://www.freecodecamp.org/news/definitive-guide-to-snippets-visual-studio-code/"
+    },
+    "Uppercase first tab stop": {
+        "prefix": "!haa:up",
+        "body": [
+            "${1/.*/${0:/upcase}/}",
+            "$0"
+        ]
+    }
+}

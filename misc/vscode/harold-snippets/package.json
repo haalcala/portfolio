@@ -1,0 +1,442 @@
+{
+  "name": "harold-snippets",
+  "displayName": "harold-snippets",
+  "description": "Harold's Snippets Collection",
+  "publisher": "HaroldAlcala",
+  "version": "0.0.2",
+  "engines": {
+    "vscode": "^1.76.0"
+  },
+  "categories": [
+    "Other",
+    "Snippets"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onWebviewPanel:catCoding"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "menus": {
+      "editor/context": [
+        {
+          "command": "harold-extension.helloWorld",
+          "group": "chatGpt@1"
+        },
+        {
+          "command": "harold-extension.catCoding.start",
+          "group": "chatGpt@3"
+        },
+        {
+          "command": "harold-extension.echo_selection",
+          "group": "chatGpt@4",
+          "when": "editorHasSelection"
+        }
+      ],
+      "editor/title": [
+        {
+          "when": "resourceLangId == markdown || resourceLangId == html",
+          "command": "harold-extension.catCoding.start",
+          "alt": "markdown.showPreviewToSide",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "calicoColors.clearColors",
+          "group": "navigation",
+          "when": "view == calicoColors.colorsView"
+        },
+        {
+          "command": "nodeDependencies.refreshEntry",
+          "when": "view == nodeDependencies",
+          "group": "navigation"
+        },
+        {
+          "command": "jsonOutline.renameNode",
+          "when": "view == jsonOutline"
+        },
+        {
+          "command": "nodeDependencies.addEntry",
+          "when": "view == nodeDependencies"
+        },
+        {
+          "command": "jsonOutline.refresh",
+          "when": "view == jsonOutline",
+          "group": "navigation"
+        },
+        {
+          "command": "ftpExplorer.refresh",
+          "when": "view == ftpExplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "nodeDependencies.editEntry",
+          "when": "view == nodeDependencies && viewItem == dependency",
+          "group": "inline"
+        },
+        {
+          "command": "nodeDependencies.deleteEntry",
+          "when": "view == nodeDependencies && viewItem == dependency"
+        },
+        {
+          "command": "jsonOutline.renameNode",
+          "when": "view == jsonOutline"
+        },
+        {
+          "command": "jsonOutline.refreshNode",
+          "when": "view == jsonOutline",
+          "group": "inline"
+        },
+        {
+          "command": "fileExplorer.refreshFile",
+          "when": "view == fileExplorer && viewItem == file",
+          "group": "inline"
+        }
+      ]
+    },
+    "commandPalette": [
+      {
+        "command": "harold-extension.helloWorld",
+        "when": "editorHasSelection",
+        "group": "1_modification@1"
+      },
+      {
+        "command": "ftpExplorer.revealResource"
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "workbench.explorer.emptyView",
+        "contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n[Clone Repository](command:git.clone)\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm)."
+      }
+    ],
+    "walkthroughs": [
+      {
+        "submenu": "harold-extension.helloWorld",
+        "id": "sample",
+        "title": "Sample",
+        "description": "A sample walkthrough",
+        "steps": [
+          {
+            "id": "runcommand",
+            "title": "Run Command",
+            "description": "This step will run a command and check off once it has been run.\n[Run Command](command:getting-started-sample.runCommand)",
+            "media": {
+              "image": "media/image.png",
+              "altText": "Empty image"
+            },
+            "completionEvents": [
+              "onCommand:getting-started-sample.runCommand"
+            ]
+          },
+          {
+            "id": "changesetting",
+            "title": "Change Setting",
+            "description": "This step will change a setting and check off when the setting has changed\n[Change Setting](command:getting-started-sample.changeSetting)",
+            "media": {
+              "markdown": "media/markdown.md"
+            },
+            "completionEvents": [
+              "onSettingChanged:getting-started-sample.sampleSetting"
+            ]
+          }
+        ]
+      }
+    ],
+    "icons": {
+      "distro-ubuntu": {
+        "description": "Ubuntu icon",
+        "default": {
+          "fontPath": "./distroicons.woff",
+          "fontCharacter": "\\E001"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vscode-chatgpt-view-container",
+          "title": "ChatGPT",
+          "icon": "images/openai-transparent.png"
+        },
+        {
+          "id": "package-explorer",
+          "title": "Package Explorer",
+          "icon": "media/dep.svg"
+        },
+        {
+          "id": "webview",
+          "title": "Example for webview",
+          "icon": "./assets/extension-icon.png"
+        }
+      ]
+    },
+    "views": {
+      "webview": [
+        {
+          "type": "webview",
+          "id": "left-panel-webview",
+          "name": "Webview",
+          "icon": "src/assets/extension-icon.png"
+        }
+      ],
+      "vscode-chatgpt-view-container": [
+        {
+          "type": "webview",
+          "id": "vscode-chatgpt.view",
+          "name": "Conversation window"
+        }
+      ],
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "calicoColors.colorsView",
+          "name": "Calico Colors"
+        },
+        {
+          "id": "jsonOutline",
+          "name": "Json Outline",
+          "when": "jsonOutlineEnabled"
+        },
+        {
+          "id": "ftpExplorer",
+          "name": "FTP Explorer"
+        },
+        {
+          "id": "fileExplorer",
+          "name": "File Explorer"
+        },
+        {
+          "id": "testView",
+          "name": "Test View"
+        },
+        {
+          "id": "testViewDragAndDrop",
+          "name": "Test View Drag and Drop"
+        }
+      ],
+      "package-explorer": [
+        {
+          "id": "nodeDependencies",
+          "name": "Node Dependencies",
+          "icon": "media/dep.svg",
+          "contextualTitle": "Package Explorer"
+        }
+      ]
+    },
+    "configuration": [
+      {
+        "title": "ChatGPT",
+        "properties": {
+          "chatgpt.promptPrefix.addTests": {
+            "type": "string",
+            "default": "Implement tests for the following code",
+            "description": "The prompt prefix used for adding tests for the selected code"
+          },
+          "chatgpt.promptPrefix.findProblems": {
+            "type": "string",
+            "default": "Find problems with the following code",
+            "description": "The prompt prefix used for finding problems for the selected code"
+          },
+          "chatgpt.promptPrefix.optimize": {
+            "type": "string",
+            "default": "Optimize the following code",
+            "description": "The prompt prefix used for optimizing the selected code"
+          },
+          "chatgpt.promptPrefix.explain": {
+            "type": "string",
+            "default": "Explain the following code",
+            "description": "The prompt prefix used for explaining the selected code"
+          },
+          "chatgpt.response.showNotification": {
+            "type": "boolean",
+            "default": false,
+            "description": "Choose whether you'd like to receive a notification when ChatGPT bot responds to your query."
+          }
+        }
+      },
+      {
+        "title": "JSON Outline",
+        "properties": {
+          "jsonOutline.autorefresh": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "harold-extension.helloWorld",
+        "title": "Hello World",
+        "category": "Harold"
+      },
+      {
+        "command": "harold-extension.echo_selection",
+        "title": "Echo selected",
+        "category": "Harold"
+      },
+      {
+        "command": "harold-extension.quickpick",
+        "title": "Hello World Quick Pick",
+        "category": "Harold"
+      },
+      {
+        "command": "harold-extension.catCoding.start",
+        "title": "Start new cat coding session",
+        "category": "Harold"
+      },
+      {
+        "command": "harold-extension.catCoding.doRefactor",
+        "title": "Cat coding refactoring",
+        "category": "Harold"
+      },
+      {
+        "command": "harold-extension.myAmazingExtension.persistWorkspaceData",
+        "title": "persistWorkspaceData",
+        "category": "Harold"
+      },
+      {
+        "command": "harold-extension.myAmazingExtension.persistGlobalData",
+        "title": "persistGlobalData",
+        "category": "Harold"
+      },
+      {
+        "command": "calicoColors.addColor",
+        "title": "Add Color",
+        "category": "Calico Colors"
+      },
+      {
+        "command": "calicoColors.clearColors",
+        "title": "Clear Colors",
+        "category": "Calico Colors",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "nodeDependencies.refreshEntry",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "nodeDependencies.addEntry",
+        "title": "Add"
+      },
+      {
+        "command": "nodeDependencies.editEntry",
+        "title": "Edit",
+        "icon": {
+          "light": "resources/light/edit.svg",
+          "dark": "resources/dark/edit.svg"
+        }
+      },
+      {
+        "command": "nodeDependencies.deleteEntry",
+        "title": "Delete"
+      },
+      {
+        "command": "ftpExplorer.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "ftpExplorer.openFtpResource",
+        "title": "Open FTP Resource"
+      },
+      {
+        "command": "ftpExplorer.revealResource",
+        "title": "Reveal in FTP View"
+      },
+      {
+        "command": "jsonOutline.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "jsonOutline.refreshNode",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "jsonOutline.renameNode",
+        "title": "Rename"
+      },
+      {
+        "command": "fileExplorer.refreshFile",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "fileExplorer.openFile",
+        "title": "Open File"
+      },
+      {
+        "command": "testView.reveal",
+        "title": "Test View: Reveal"
+      },
+      {
+        "command": "testView.changeTitle",
+        "title": "Test View: Change Title"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "html",
+        "path": "./snippets/my-snippets.code-snippets"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.76.0",
+    "@typescript-eslint/eslint-plugin": "^5.53.0",
+    "@typescript-eslint/parser": "^5.53.0",
+    "@vscode/test-electron": "^2.2.3",
+    "eslint": "^8.34.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.5",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "ftp": "^0.3.10",
+    "jsonc-parser": "^3.2.0",
+    "mkdirp": "^2.1.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
