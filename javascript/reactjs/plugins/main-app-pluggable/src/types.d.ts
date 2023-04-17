@@ -4,3 +4,8 @@ declare global {
         registerAction(component: React.ComponentType): void
     }
 }
+
+
+type BaseChildProps = {
+    theme: Theme;
+}
