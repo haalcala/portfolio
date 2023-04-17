@@ -2,9 +2,7 @@ import * as util from "./util.mjs"
 
 import * as shortid from 'shortid';
 
-function isRunningAsLambda() {
-    return process.env.AWS_EXECUTION_ENV && process.env.AWS_EXECUTION_ENV.startsWith('AWS_Lambda_');
-}
+
 
 export async function handler(event, context) {
     console.log({ event }, { context })
@@ -25,6 +23,9 @@ export async function handler(event, context) {
     return response;
 };
 
+function isRunningAsLambda() {
+    return process.env.AWS_EXECUTION_ENV && process.env.AWS_EXECUTION_ENV.startsWith('AWS_Lambda_');
+}
 
 if (isRunningAsLambda()) {
     console.log('Running as a Lambda function');
