@@ -1,8 +1,8 @@
 import * as shortid from 'shortid'
 
-import * as util from "./util.js"
+import * as util from "./utils/util.js"
 
-const AWS = require('aws-sdk');
+const package_json = util.readPackgeJson();
 
 export async function handler(event, context) {
     console.log({ event }, { context })
@@ -18,16 +18,14 @@ export async function handler(event, context) {
             event,
             context,
             MY_CONST: util.MY_CONST,
+            version: package_json.version,
+            MY_SETTINGS: process.env.MY_SETTINGS
         })
     };
     return response;
 }
 
-function isRunningAsLambda() {
-    return process.env.AWS_EXECUTION_ENV && process.env.AWS_EXECUTION_ENV.startsWith('AWS_Lambda_');
-}
-
-if (isRunningAsLambda()) {
+if (util.isRunningAsLambda()) {
     console.log('Running as a Lambda function');
 } else {
     console.log('Running locally');

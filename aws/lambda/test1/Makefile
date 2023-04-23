@@ -1,5 +1,17 @@
 include build/setup.mk
 
+ZIP_FILE ?= $(PLUGIN_ID)-$(PLUGIN_VERSION).zip
+
+FUNCTION=${PLUGIN_ID}
+
+BUCKET=tv3commas
+
+AWS_REGION=us-east-2
+
+AWS_PROFILE=harold_g14
+
+AWS=aws --region ${AWS_REGION} --profile ${AWS_PROFILE}
+
 .PHONY: build test run clean stop check-style fix-style run-unit emojis help package-ci storybook build-storybook update-dependencies
 
 check-style: node_modules ## Checks JS file for ESLint confirmity
@@ -15,7 +27,7 @@ fix-style: node_modules ## Fix JS file ESLint issues
 check-types: node_modules ## Checks TS file for TypeScript confirmity
 	@echo Checking for TypeScript compliance
 
-	npm run check-types
+	npm run check
 
 test: node_modules ## Runs tests
 	@echo Running jest unit/component testing
@@ -31,7 +43,8 @@ node_modules: package.json package-lock.json
 package: build ## Packages app
 	@echo Packaging webapp
 
-	npm run package
+	npm run build:clean 
+	cd dist && zip -r9 ${ZIP_FILE} .
 
 build: node_modules ## Builds the app
 	@echo Building Webapp
@@ -53,6 +66,44 @@ clean: ## Clears cached; deletes node_modules and dist directories
 
 	rm -rf dist
 	rm -rf node_modules
+
+	rm ${PLUGIN_ID}-*.zip
+
+deploy: ## Deploys app to AWS S3
+	@echo Deploying Webapp to AWS S3
+
+	$(AWS) s3 cp dist/${ZIP_FILE} s3://tv3commas/${ZIP_FILE}
+	$(AWS) lambda update-function-code --function-name ${FUNCTION} --s3-bucket ${BUCKET} --s3-key ${ZIP_FILE}
+
+deploy-alias: deploy
+	@echo Deploy and alias to ${PLUGIN_VERSION}
+
+	@sleep 10
+	
+	@echo Publish new version
+	$(AWS) lambda publish-version --function-name ${FUNCTION}
+	
+	@CURRENT_VERSION=$(shell $(AWS) lambda publish-version --function-name ${FUNCTION} | jq -r '.Version'); \
+	echo CURRENT_VERSION=$$CURRENT_VERSION; \
+	$(AWS) lambda create-alias --function-name ${FUNCTION} --function-version $$CURRENT_VERSION --name v$(shell echo ${PLUGIN_VERSION} | sed 's/\./_/g') || \
+	$(AWS) lambda update-alias --function-name ${FUNCTION} --function-version $$CURRENT_VERSION --name v$(shell echo ${PLUGIN_VERSION} | sed 's/\./_/g')
+
+new-release: build
+	npm run build:patch
+
+	make package
+
+	make deploy-alias
+
+	make git-tag
+
+git-tag:
+	git tag v${PLUGIN_VERSION}
+	git push origin v${PLUGIN_VERSION}
+
+get-aliases:
+	@echo Get aliases for ${FUNCTION}
+	$(AWS) lambda list-aliases --function-name ${FUNCTION}
 
 ## Help documentatin à la https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
