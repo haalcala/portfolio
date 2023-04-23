@@ -22,7 +22,8 @@
     },
     "exclude": [
         "node_modules",
-        "dist"
+        "dist",
+        "src/**/*.spec.ts",
     ],
     "esModuleInterop": true,
     "allowJs": true,

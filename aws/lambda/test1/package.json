@@ -1,6 +1,6 @@
 {
   "name": "test_function_js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "util.js",
   "scripts": {
@@ -8,8 +8,11 @@
     "fix": "eslint --ext .js,.jsx,.tsx,.ts . --quiet --fix --cache && stylelint \"**/*.{css,scss}\" --fix",
     "test": "cross-env TZ=Etc/UTC jest --maxWorkers=50%",
     "watch": "npm run build; nodemon -e ts,js -w src -x \"./node_modules/.bin/tsc; cd dist; ts-node-esm index.js\"",
-    "build": "rm -rf dist && tsc && cp package.json dist/ && cd dist && npm i --production",
-    "package": "rm -rf dist && tsc && cp -r node_modules_prod dist/node_modules && cp package.json dist/ && cd dist && zip -r9 ../test_function_js.zip . && cd .."
+    "clean": "rm -rf dist",
+    "build:clean": "npm run clean && npm run build",
+    "build": "tsc && cp package.json dist/ && cd dist && npm i --omit=dev",
+    "build:patch": "npm run build && npm version patch",
+    "package": "npm run build:clean && cd dist && zip -r9 ../test_function_js.zip . && cd .."
   },
   "author": "",
   "license": "ISC",
