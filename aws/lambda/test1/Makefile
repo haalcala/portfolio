@@ -88,7 +88,7 @@ deploy-alias: deploy
 	$(AWS) lambda create-alias --function-name ${FUNCTION} --function-version $$CURRENT_VERSION --name v$(shell echo ${PLUGIN_VERSION} | sed 's/\./_/g') || \
 	$(AWS) lambda update-alias --function-name ${FUNCTION} --function-version $$CURRENT_VERSION --name v$(shell echo ${PLUGIN_VERSION} | sed 's/\./_/g')
 
-new-release: build
+new-release: test build
 	npm run build:patch
 
 	make package
@@ -100,6 +100,10 @@ new-release: build
 git-tag:
 	git tag v${PLUGIN_VERSION}
 	git push origin v${PLUGIN_VERSION}
+
+remove-git-tag:
+	git tag -d v${PLUGIN_VERSION}
+	git push --delete origin v${PLUGIN_VERSION}
 
 get-aliases:
 	@echo Get aliases for ${FUNCTION}
