@@ -1,6 +1,6 @@
 {
   "name": "test_function_js",
-  "version": "1.0.9",
+  "version": "1.0.13",
   "description": "",
   "main": "util.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "clean": "rm -rf dist",
     "build:clean": "npm run clean && npm run build",
     "build": "tsc && cp package.json dist/ && cd dist && npm i --omit=dev",
-    "build:patch": "npm run build && npm version patch",
+    "build:patch": "npm run build && npm version patch && git add package.json && git commit -m \"patch version bump\" && git push",
     "package": "npm run build:clean && cd dist && zip -r9 ../test_function_js.zip . && cd .."
   },
   "author": "",
