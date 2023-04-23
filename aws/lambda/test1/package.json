@@ -42,5 +42,8 @@
     "jest-cli": "27.0.6",
     "jest-junit": "12.2.0",
     "jest-watch-typeahead": "0.6.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
