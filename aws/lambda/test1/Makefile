@@ -1,3 +1,5 @@
+include build/setup.mk
+
 .PHONY: build test run clean stop check-style fix-style run-unit emojis help package-ci storybook build-storybook update-dependencies
 
 check-style: node_modules ## Checks JS file for ESLint confirmity
@@ -52,6 +54,8 @@ dev: node_modules ## Runs webpack-dev-server
 
 clean: ## Clears cached; deletes node_modules and dist directories
 	@echo Cleaning Webapp
+	
+	@echo ${PLUGIN_ID}
 
 	rm -rf dist
 	rm -rf node_modules
