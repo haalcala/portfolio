@@ -7,7 +7,7 @@
     "check": "eslint --ext .js,.jsx,.tsx,.ts . --quiet --cache && stylelint \"**/*.{css,scss}\"",
     "fix": "eslint --ext .js,.jsx,.tsx,.ts . --quiet --fix --cache && stylelint \"**/*.{css,scss}\" --fix",
     "test": "cross-env TZ=Etc/UTC jest --maxWorkers=50%",
-    "watch": "[ ! -d \"./dist\" ] && npm run build; nodemon -e ts,js -w src -x \"./node_modules/.bin/tsc; cd dist; ts-node-esm index.js\"",
+    "watch": "npm run build; nodemon -e ts,js -w src -x \"./node_modules/.bin/tsc; cd dist; ts-node-esm index.js\"",
     "build": "rm -rf dist && tsc && cp package.json dist/ && cd dist && npm i --production",
     "package": "rm -rf dist && tsc && cp -r node_modules_prod dist/node_modules && cp package.json dist/ && cd dist && zip -r9 ../test_function_js.zip . && cd .."
   },
@@ -18,6 +18,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@types/jest": "26.0.24",
     "@types/aws-lambda": "^8.10.114",
     "@types/node": "^14.14.31",
     "cross-env": "^7.0.3",
@@ -32,6 +33,11 @@
     "eslint-plugin-no-only-tests": "2.6.0",
     "eslint-plugin-react": "7.24.0",
     "@typescript-eslint/eslint-plugin": "4.28.1",
-    "@typescript-eslint/parser": "4.28.1"
+    "@typescript-eslint/parser": "4.28.1",
+    "jest": "27.0.6",
+    "jest-canvas-mock": "2.3.1",
+    "jest-cli": "27.0.6",
+    "jest-junit": "12.2.0",
+    "jest-watch-typeahead": "0.6.4"
   }
 }
