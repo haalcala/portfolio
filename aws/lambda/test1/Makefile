@@ -31,21 +31,15 @@ node_modules: package.json package-lock.json
 package: build ## Packages app
 	@echo Packaging webapp
 
-	mkdir tmp
-	mv dist tmp/client
-	tar -C tmp -czf mattermost-webapp.tar.gz client
-	mv tmp/client dist
-	rmdir tmp
+	npm run package
 
 build: node_modules ## Builds the app
-	@echo Building mattermost Webapp
-
-	rm -rf dist
+	@echo Building Webapp
 
 	npm run build
 
 run: node_modules ## Runs app
-	@echo Running mattermost Webapp for development
+	@echo Running Webapp for development
 
 	npm run run &
 
@@ -54,7 +48,7 @@ dev: node_modules ## Runs webpack-dev-server
 
 clean: ## Clears cached; deletes node_modules and dist directories
 	@echo Cleaning Webapp
-	
+
 	@echo ${PLUGIN_ID}
 
 	rm -rf dist
