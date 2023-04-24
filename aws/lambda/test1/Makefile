@@ -2,15 +2,20 @@ include build/setup.mk
 
 ZIP_FILE ?= $(PLUGIN_ID)-$(PLUGIN_VERSION).zip
 
-FUNCTION=${PLUGIN_ID}
+FUNCTION = ${PLUGIN_ID}
 
-BUCKET=tv3commas
+AWS_BUCKET ?= 
 
-AWS_REGION=us-east-2
+AWS_REGION = 
 
-AWS_PROFILE=harold_g14
+AWS_PROFILE = 
 
 AWS=aws --region ${AWS_REGION} --profile ${AWS_PROFILE}
+
+# Include custom makefile, if present
+ifneq ($(wildcard build/custom.mk),)
+	include build/custom.mk
+endif
 
 .PHONY: build test run clean stop check-style fix-style run-unit emojis help package-ci storybook build-storybook update-dependencies
 
@@ -42,9 +47,14 @@ node_modules: package.json package-lock.json
 
 package: build ## Packages app
 	@echo Packaging webapp
-
 	npm run build:clean 
 	cd dist && zip -r9 ${ZIP_FILE} .
+ifneq ($(wildcard $(ASSETS_DIR)/.),)
+	cp -r $(ASSETS_DIR) dist/$(PLUGIN_ID)/
+endif
+ifneq ($(HAS_PUBLIC),)
+	cp -r public dist/$(PLUGIN_ID)/
+endif
 
 build: node_modules ## Builds the app
 	@echo Building Webapp
@@ -72,8 +82,8 @@ clean: ## Clears cached; deletes node_modules and dist directories
 deploy: ## Deploys app to AWS S3
 	@echo Deploying Webapp to AWS S3
 
-	$(AWS) s3 cp dist/${ZIP_FILE} s3://tv3commas/${ZIP_FILE}
-	$(AWS) lambda update-function-code --function-name ${FUNCTION} --s3-bucket ${BUCKET} --s3-key ${ZIP_FILE}
+	$(AWS) s3 cp dist/${ZIP_FILE} s3://${AWS_BUCKET}/${ZIP_FILE}
+	$(AWS) lambda update-function-code --function-name ${FUNCTION} --s3-bucket ${AWS_BUCKET} --s3-key ${ZIP_FILE}
 
 deploy-alias: deploy
 	@echo Deploy and alias to ${PLUGIN_VERSION}

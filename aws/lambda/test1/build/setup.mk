@@ -1,3 +1,6 @@
+NPM ?= $(shell command -v npm 2> /dev/null)
+GOPATH ?= $(shell go env GOPATH)
+
 # Extract the plugin id from the manifest.
 PLUGIN_ID ?= $(shell jq -r '.name' package.json)
 ifeq ($(PLUGIN_ID),)
